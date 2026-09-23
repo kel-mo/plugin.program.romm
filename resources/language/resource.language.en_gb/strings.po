@@ -317,3 +317,9 @@ msgstr ""
 msgctxt "#30628"
 msgid "Press Back to cancel"
 msgstr ""
+
+# Settings: sync 30700-30799
+
+msgctxt "#30724"
+msgid "Registered with RomM as {0}"
+msgstr ""

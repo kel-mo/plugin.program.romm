@@ -5,7 +5,7 @@ import time
 import xbmc
 import xbmcgui
 
-from . import kodi, pairdialog, qr
+from . import device, kodi, pairdialog, qr
 from .api import ApiError, RommClient, MIN_SERVER
 
 
@@ -21,6 +21,11 @@ def _store(client, payload):
         kodi.set_setting('username', me.get('username', ''))
     except ApiError:
         kodi.set_setting('username', '')
+    if not payload.get('device_id'):              # pair-code tokens come without a device
+        try:
+            device.ensure_device(client)
+        except ApiError as e:
+            kodi.log('device registration failed: {}'.format(e), xbmc.LOGWARNING)
     kodi.notify(kodi.L(30604, client.base_url))
 
 
