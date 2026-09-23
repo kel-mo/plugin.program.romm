@@ -1,0 +1,430 @@
+{
+  "_notes": "Keyed by Kodi core id. Files are relative to the Kodi/libretro system directory; when every file of a core lives in one subdirectory it is given as 'subdir' and the names are bare, otherwise names carry their relative path (bluemsx). Derived from Grout bios/data/core_requirements.json where the core exists there (mednafen_psx_hw -> beetle-psx, mednafen_* -> beetle-*, mupen64plus_next -> mupen64plus-nx, puae -> uae, bsnes -> beetle-bsnes), otherwise from the BIOS section of docs.libretro.com/library/<core>/. Known discrepancies kept as Grout has them: o2em lists all four Videopac ROMs as required although the core only loads o2rom.bin; yabasanshiro marks saturn_bios.bin required while libretro docs say optional; dolphin's codehandler.bin is the Sys file Grout tracks, the optional GC IPL.bin lives under saves, not system.",
+  "game.libretro.2048": {
+    "_source": "docs.libretro.com (no BIOS section)",
+    "optional": [],
+    "required": []
+  },
+  "game.libretro.a5200": {
+    "_source": "grout:a5200_libretro",
+    "optional": [
+      "5200.rom"
+    ],
+    "required": []
+  },
+  "game.libretro.atari800": {
+    "_source": "grout:atari800_libretro",
+    "optional": [
+      "5200.rom",
+      "ATARIBAS.ROM",
+      "ATARIOSA.ROM",
+      "ATARIOSB.ROM",
+      "ATARIXL.ROM",
+      "BB01R4_OS.ROM",
+      "XEGAME.ROM"
+    ],
+    "required": []
+  },
+  "game.libretro.beetle-bsnes": {
+    "_source": "grout:bsnes_libretro",
+    "optional": [
+      "dsp1.data.rom",
+      "dsp1.program.rom",
+      "dsp1b.data.rom",
+      "dsp1b.program.rom",
+      "dsp2.data.rom",
+      "dsp2.program.rom",
+      "dsp3.data.rom",
+      "dsp3.program.rom",
+      "dsp4.data.rom",
+      "dsp4.program.rom",
+      "cx4.data.rom",
+      "st010.data.rom",
+      "st010.program.rom",
+      "st011.data.rom",
+      "st011.program.rom",
+      "st018.data.rom",
+      "st018.program.rom",
+      "SGB1.sfc",
+      "SGB2.sfc",
+      "BS-X.bin"
+    ],
+    "required": []
+  },
+  "game.libretro.beetle-gba": {
+    "_source": "grout:mednafen_gba_libretro",
+    "optional": [
+      "gba_bios.bin"
+    ],
+    "required": []
+  },
+  "game.libretro.beetle-lynx": {
+    "_source": "grout:mednafen_lynx_libretro",
+    "optional": [],
+    "required": [
+      "lynxboot.img"
+    ]
+  },
+  "game.libretro.beetle-ngp": {
+    "_source": "docs.libretro.com (no BIOS section)",
+    "optional": [],
+    "required": []
+  },
+  "game.libretro.beetle-pce": {
+    "_source": "grout:mednafen_pce_libretro",
+    "optional": [
+      "syscard3.pce",
+      "syscard2.pce",
+      "syscard1.pce",
+      "gexpress.pce"
+    ],
+    "required": []
+  },
+  "game.libretro.beetle-pcfx": {
+    "_source": "grout:mednafen_pcfx_libretro",
+    "optional": [],
+    "required": [
+      "pcfx.rom"
+    ]
+  },
+  "game.libretro.beetle-psx": {
+    "_source": "grout:mednafen_psx_hw_libretro",
+    "optional": [
+      "psxonpsp660.bin",
+      "ps1_rom.bin"
+    ],
+    "required": [
+      "scph5500.bin",
+      "scph5501.bin",
+      "scph5502.bin"
+    ]
+  },
+  "game.libretro.beetle-saturn": {
+    "_source": "grout:mednafen_saturn_libretro",
+    "optional": [
+      "mpr-18811-mx.ic1",
+      "mpr-19367-mx.ic1"
+    ],
+    "required": [
+      "sega_101.bin",
+      "mpr-17933.bin"
+    ]
+  },
+  "game.libretro.beetle-supergrafx": {
+    "_source": "grout:mednafen_supergrafx_libretro",
+    "optional": [
+      "syscard3.pce",
+      "syscard2.pce",
+      "syscard1.pce",
+      "gexpress.pce"
+    ],
+    "required": []
+  },
+  "game.libretro.beetle-vb": {
+    "_source": "docs.libretro.com (no BIOS section)",
+    "optional": [],
+    "required": []
+  },
+  "game.libretro.beetle-wswan": {
+    "_source": "docs.libretro.com (no BIOS section)",
+    "optional": [],
+    "required": []
+  },
+  "game.libretro.blastem": {
+    "_source": "grout:blastem_libretro",
+    "optional": [
+      "rom.db"
+    ],
+    "required": []
+  },
+  "game.libretro.bluemsx": {
+    "_source": "grout:bluemsx_libretro",
+    "optional": [],
+    "required": [
+      "Databases/msxromdb.xml",
+      "Machines/Shared Roms/MSX.rom"
+    ]
+  },
+  "game.libretro.dolphin": {
+    "_source": "grout:dolphin_libretro",
+    "optional": [],
+    "required": [
+      "codehandler.bin"
+    ],
+    "subdir": "dolphin-emu/Sys/"
+  },
+  "game.libretro.dosbox": {
+    "_source": "docs.libretro.com (no BIOS section)",
+    "optional": [],
+    "required": []
+  },
+  "game.libretro.dosbox-pure": {
+    "_source": "docs.libretro.com (no BIOS section)",
+    "optional": [],
+    "required": []
+  },
+  "game.libretro.fceumm": {
+    "_source": "grout:fceumm_libretro",
+    "optional": [
+      "disksys.rom",
+      "nes.pal",
+      "gamegenie.nes"
+    ],
+    "required": []
+  },
+  "game.libretro.gambatte": {
+    "_source": "grout:gambatte_libretro",
+    "optional": [
+      "gb_bios.bin",
+      "gbc_bios.bin"
+    ],
+    "required": []
+  },
+  "game.libretro.gearsystem": {
+    "_source": "docs.libretro.com",
+    "optional": [
+      "bios.sms",
+      "bios.gg"
+    ],
+    "required": []
+  },
+  "game.libretro.gw": {
+    "_source": "docs.libretro.com (no BIOS section)",
+    "optional": [],
+    "required": []
+  },
+  "game.libretro.handy": {
+    "_source": "grout:handy_libretro",
+    "optional": [
+      "lynxboot.img"
+    ],
+    "required": []
+  },
+  "game.libretro.hatari": {
+    "_source": "grout:hatari_libretro",
+    "optional": [],
+    "required": [
+      "tos.img"
+    ]
+  },
+  "game.libretro.melonds": {
+    "_source": "grout:melonds_libretro",
+    "optional": [
+      "firmware.bin",
+      "bios7.bin",
+      "bios9.bin",
+      "dsi_firmware.bin",
+      "dsi_bios7.bin",
+      "dsi_bios9.bin",
+      "dsi_nand.bin",
+      "dsi_sd_card.bin"
+    ],
+    "required": []
+  },
+  "game.libretro.mesen": {
+    "_source": "grout:mesen_libretro",
+    "optional": [
+      "disksys.rom"
+    ],
+    "required": []
+  },
+  "game.libretro.mesen-s": {
+    "_source": "grout:mesen-s_libretro",
+    "optional": [
+      "dsp1.data.rom",
+      "dsp1.program.rom",
+      "dsp1b.data.rom",
+      "dsp1b.program.rom",
+      "dsp2.data.rom",
+      "dsp2.program.rom",
+      "dsp3.data.rom",
+      "dsp3.program.rom",
+      "dsp4.data.rom",
+      "dsp4.program.rom",
+      "st010.data.rom",
+      "st010.program.rom",
+      "st011.data.rom",
+      "st011.program.rom",
+      "dmg_boot.bin",
+      "cgb_boot.bin",
+      "sgb_boot.bin",
+      "sgb2_boot.bin",
+      "SGB1.sfc",
+      "SGB2.sfc",
+      "BS-X.bin"
+    ],
+    "required": []
+  },
+  "game.libretro.mgba": {
+    "_source": "grout:mgba_libretro",
+    "optional": [
+      "gba_bios.bin",
+      "gb_bios.bin",
+      "gbc_bios.bin",
+      "sgb_bios.bin"
+    ],
+    "required": []
+  },
+  "game.libretro.mrboom": {
+    "_source": "assumed",
+    "_unverified": true,
+    "optional": [],
+    "required": []
+  },
+  "game.libretro.mupen64plus-nx": {
+    "_source": "grout:mupen64plus_next_libretro",
+    "optional": [
+      "IPL.n64"
+    ],
+    "required": [],
+    "subdir": "Mupen64plus/"
+  },
+  "game.libretro.nestopia": {
+    "_source": "grout:nestopia_libretro",
+    "optional": [
+      "disksys.rom"
+    ],
+    "required": []
+  },
+  "game.libretro.nx": {
+    "_source": "docs.libretro.com (no BIOS section)",
+    "optional": [],
+    "required": []
+  },
+  "game.libretro.o2em": {
+    "_source": "grout:o2em_libretro",
+    "optional": [],
+    "required": [
+      "o2rom.bin",
+      "c52.bin",
+      "g7400.bin",
+      "jopac.bin"
+    ]
+  },
+  "game.libretro.pcsx-rearmed": {
+    "_source": "grout:pcsx_rearmed_libretro",
+    "optional": [
+      "scph5500.bin",
+      "scph5501.bin",
+      "scph5502.bin",
+      "psxonpsp660.bin"
+    ],
+    "required": []
+  },
+  "game.libretro.pokemini": {
+    "_source": "grout:pokemini_libretro",
+    "optional": [
+      "bios.min"
+    ],
+    "required": []
+  },
+  "game.libretro.prboom": {
+    "_source": "docs.libretro.com",
+    "optional": [],
+    "required": [
+      "prboom.wad"
+    ]
+  },
+  "game.libretro.prosystem": {
+    "_source": "grout:prosystem_libretro",
+    "optional": [
+      "7800 BIOS (U).rom"
+    ],
+    "required": []
+  },
+  "game.libretro.quicknes": {
+    "_source": "docs.libretro.com (no BIOS section)",
+    "optional": [],
+    "required": []
+  },
+  "game.libretro.sameboy": {
+    "_source": "grout:sameboy_libretro",
+    "optional": [
+      "dmg_boot.bin",
+      "cgb_boot.bin"
+    ],
+    "required": []
+  },
+  "game.libretro.stella": {
+    "_source": "docs.libretro.com (no BIOS section)",
+    "optional": [],
+    "required": []
+  },
+  "game.libretro.supafaust": {
+    "_source": "assumed",
+    "_unverified": true,
+    "optional": [],
+    "required": []
+  },
+  "game.libretro.swanstation": {
+    "_source": "grout:swanstation_libretro",
+    "optional": [
+      "psxonpsp660.bin",
+      "scph5500.bin",
+      "scph5501.bin",
+      "scph5502.bin",
+      "ps1_rom.bin"
+    ],
+    "required": []
+  },
+  "game.libretro.tgbdual": {
+    "_source": "docs.libretro.com (no BIOS section)",
+    "optional": [],
+    "required": []
+  },
+  "game.libretro.tyrquake": {
+    "_source": "docs.libretro.com (no BIOS section)",
+    "optional": [],
+    "required": []
+  },
+  "game.libretro.uae": {
+    "_source": "grout:puae_libretro",
+    "optional": [
+      "kick33180.A500",
+      "kick37175.A500",
+      "kick37350.A600",
+      "kick40063.A600",
+      "kick39106.A1200",
+      "kick39106.A4000",
+      "kick40068.A4000",
+      "kick34005.CDTV"
+    ],
+    "required": [
+      "kick34005.A500",
+      "kick40068.A1200",
+      "kick40060.CD32",
+      "kick40060.CD32.ext"
+    ]
+  },
+  "game.libretro.vbam": {
+    "_source": "grout:vbam_libretro",
+    "optional": [
+      "gba_bios.bin",
+      "gb_bios.bin",
+      "gbc_bios.bin"
+    ],
+    "required": []
+  },
+  "game.libretro.virtualjaguar": {
+    "_source": "docs.libretro.com",
+    "optional": [
+      "[BIOS] Atari Jaguar CD (World).j64",
+      "[BIOS] Atari Jaguar Developer CD (World).j64"
+    ],
+    "required": []
+  },
+  "game.libretro.yabasanshiro": {
+    "_source": "grout:yabasanshiro_libretro",
+    "optional": [],
+    "required": [
+      "saturn_bios.bin"
+    ]
+  },
+  "game.libretro.yabause": {
+    "_source": "grout:yabause_libretro",
+    "optional": [
+      "saturn_bios.bin"
+    ],
+    "required": []
+  }
+}

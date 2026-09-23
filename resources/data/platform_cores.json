@@ -1,0 +1,1119 @@
+{
+  "platforms": {
+    "64dd": {
+      "name": "Nintendo 64DD",
+      "cores": [
+        "game.libretro.mupen64plus-nx"
+      ],
+      "extensions": [
+        "bin",
+        "n64",
+        "u1",
+        "v64",
+        "z64"
+      ]
+    },
+    "amiga": {
+      "name": "Commodore Amiga",
+      "cores": [
+        "game.libretro.uae"
+      ],
+      "extensions": [
+        "7z",
+        "adf",
+        "adz",
+        "ccd",
+        "chd",
+        "cue",
+        "dms",
+        "fdi",
+        "hdf",
+        "hdz",
+        "info",
+        "ipf",
+        "iso",
+        "lha",
+        "m3u",
+        "mds",
+        "nrg",
+        "raw",
+        "slave",
+        "uae",
+        "zip"
+      ]
+    },
+    "amiga-cd32": {
+      "name": "Commodore Amiga CD32",
+      "cores": [
+        "game.libretro.uae"
+      ],
+      "extensions": [
+        "7z",
+        "adf",
+        "adz",
+        "ccd",
+        "chd",
+        "cue",
+        "dms",
+        "fdi",
+        "hdf",
+        "hdz",
+        "info",
+        "ipf",
+        "iso",
+        "lha",
+        "m3u",
+        "mds",
+        "nrg",
+        "raw",
+        "slave",
+        "uae",
+        "zip"
+      ]
+    },
+    "atari-jaguar-cd": {
+      "name": "Atari Jaguar CD",
+      "cores": [
+        "game.libretro.virtualjaguar"
+      ],
+      "extensions": [
+        "abs",
+        "bin",
+        "cdi",
+        "chd",
+        "cof",
+        "cue",
+        "j64",
+        "jag",
+        "prg",
+        "rom"
+      ]
+    },
+    "atari-st": {
+      "name": "Atari ST",
+      "cores": [
+        "game.libretro.hatari"
+      ],
+      "extensions": [
+        "dim",
+        "gem",
+        "ide",
+        "ipf",
+        "m3u",
+        "msa",
+        "st",
+        "stx",
+        "vhd",
+        "zip"
+      ]
+    },
+    "atari-xegs": {
+      "name": "Atari XEGS",
+      "cores": [
+        "game.libretro.atari800"
+      ],
+      "extensions": [
+        "a52",
+        "atr",
+        "atx",
+        "bin",
+        "car",
+        "cas",
+        "com",
+        "dcm",
+        "m3u",
+        "rom",
+        "xex",
+        "xfd",
+        "zip"
+      ]
+    },
+    "atari2600": {
+      "name": "Atari 2600",
+      "cores": [
+        "game.libretro.stella"
+      ],
+      "extensions": [
+        "a26",
+        "bin"
+      ]
+    },
+    "atari5200": {
+      "name": "Atari 5200",
+      "cores": [
+        "game.libretro.a5200",
+        "game.libretro.atari800"
+      ],
+      "extensions": [
+        "a52",
+        "atr",
+        "atx",
+        "bin",
+        "car",
+        "cas",
+        "com",
+        "dcm",
+        "m3u",
+        "rom",
+        "xex",
+        "xfd",
+        "zip"
+      ]
+    },
+    "atari7800": {
+      "name": "Atari 7800",
+      "cores": [
+        "game.libretro.prosystem"
+      ],
+      "extensions": [
+        "a78",
+        "bin",
+        "cdf"
+      ]
+    },
+    "atari800": {
+      "name": "Atari 400/800",
+      "cores": [
+        "game.libretro.atari800"
+      ],
+      "extensions": [
+        "a52",
+        "atr",
+        "atx",
+        "bin",
+        "car",
+        "cas",
+        "com",
+        "dcm",
+        "m3u",
+        "rom",
+        "xex",
+        "xfd",
+        "zip"
+      ]
+    },
+    "atari8bit": {
+      "name": "Atari 8-bit (XL/XE)",
+      "cores": [
+        "game.libretro.atari800"
+      ],
+      "extensions": [
+        "a52",
+        "atr",
+        "atx",
+        "bin",
+        "car",
+        "cas",
+        "com",
+        "dcm",
+        "m3u",
+        "rom",
+        "xex",
+        "xfd",
+        "zip"
+      ]
+    },
+    "colecovision": {
+      "name": "ColecoVision",
+      "cores": [
+        "game.libretro.bluemsx"
+      ],
+      "extensions": [
+        "cas",
+        "col",
+        "dsk",
+        "m3u",
+        "mx1",
+        "mx2",
+        "ri",
+        "rom",
+        "sc",
+        "sf",
+        "sg"
+      ]
+    },
+    "commodore-cdtv": {
+      "name": "Commodore CDTV",
+      "cores": [
+        "game.libretro.uae"
+      ],
+      "extensions": [
+        "7z",
+        "adf",
+        "adz",
+        "ccd",
+        "chd",
+        "cue",
+        "dms",
+        "fdi",
+        "hdf",
+        "hdz",
+        "info",
+        "ipf",
+        "iso",
+        "lha",
+        "m3u",
+        "mds",
+        "nrg",
+        "raw",
+        "slave",
+        "uae",
+        "zip"
+      ]
+    },
+    "doom": {
+      "name": "Doom",
+      "cores": [
+        "game.libretro.prboom"
+      ],
+      "extensions": [
+        "ipk3",
+        "iwad",
+        "lmp",
+        "m3u",
+        "pk3",
+        "pwad",
+        "wad",
+        "zip"
+      ]
+    },
+    "dos": {
+      "name": "DOS",
+      "cores": [
+        "game.libretro.dosbox-pure",
+        "game.libretro.dosbox"
+      ],
+      "extensions": [
+        "bat",
+        "chd",
+        "com",
+        "conf",
+        "cue",
+        "dosz",
+        "exe",
+        "ima",
+        "img",
+        "ins",
+        "iso",
+        "jrc",
+        "m3u",
+        "m3u8",
+        "vhd",
+        "zip"
+      ]
+    },
+    "famicom": {
+      "name": "Famicom",
+      "cores": [
+        "game.libretro.mesen",
+        "game.libretro.nestopia",
+        "game.libretro.fceumm",
+        "game.libretro.quicknes"
+      ],
+      "extensions": [
+        "fds",
+        "nes",
+        "nsf",
+        "unf",
+        "unif"
+      ]
+    },
+    "fds": {
+      "name": "Famicom Disk System",
+      "cores": [
+        "game.libretro.mesen",
+        "game.libretro.nestopia",
+        "game.libretro.fceumm"
+      ],
+      "extensions": [
+        "fds",
+        "nes",
+        "nsf",
+        "unf",
+        "unif"
+      ]
+    },
+    "g-and-w": {
+      "name": "Game & Watch",
+      "cores": [
+        "game.libretro.gw"
+      ],
+      "extensions": [
+        "mgw"
+      ]
+    },
+    "gamegear": {
+      "name": "Sega Game Gear",
+      "cores": [
+        "game.libretro.gearsystem",
+        "game.libretro.blastem"
+      ],
+      "extensions": [
+        "32x",
+        "bin",
+        "chd",
+        "col",
+        "cue",
+        "flac",
+        "gen",
+        "gg",
+        "gz",
+        "iso",
+        "md",
+        "mv",
+        "rom",
+        "sc",
+        "sc3",
+        "sf7",
+        "sg",
+        "sg1",
+        "smd",
+        "sms",
+        "toc",
+        "vgm",
+        "vgz",
+        "wav"
+      ]
+    },
+    "gb": {
+      "name": "Game Boy",
+      "cores": [
+        "game.libretro.gambatte",
+        "game.libretro.sameboy",
+        "game.libretro.mgba",
+        "game.libretro.mesen-s",
+        "game.libretro.vbam",
+        "game.libretro.tgbdual"
+      ],
+      "extensions": [
+        "bs",
+        "cgb",
+        "dmg",
+        "fig",
+        "gb",
+        "gba",
+        "gbc",
+        "sfc",
+        "sgb",
+        "smc",
+        "swc"
+      ]
+    },
+    "gba": {
+      "name": "Game Boy Advance",
+      "cores": [
+        "game.libretro.mgba",
+        "game.libretro.vbam",
+        "game.libretro.beetle-gba"
+      ],
+      "extensions": [
+        "agb",
+        "bin",
+        "cgb",
+        "dmg",
+        "gb",
+        "gba",
+        "gbc",
+        "sgb"
+      ]
+    },
+    "gbc": {
+      "name": "Game Boy Color",
+      "cores": [
+        "game.libretro.gambatte",
+        "game.libretro.sameboy",
+        "game.libretro.mgba",
+        "game.libretro.mesen-s",
+        "game.libretro.vbam",
+        "game.libretro.tgbdual"
+      ],
+      "extensions": [
+        "bs",
+        "cgb",
+        "dmg",
+        "fig",
+        "gb",
+        "gba",
+        "gbc",
+        "sfc",
+        "sgb",
+        "smc",
+        "swc"
+      ]
+    },
+    "genesis": {
+      "name": "Sega Genesis / Mega Drive",
+      "cores": [
+        "game.libretro.blastem"
+      ],
+      "extensions": [
+        "32x",
+        "bin",
+        "chd",
+        "col",
+        "cue",
+        "flac",
+        "gen",
+        "gg",
+        "gz",
+        "iso",
+        "md",
+        "rom",
+        "sc",
+        "sc3",
+        "sf7",
+        "sg",
+        "sg1",
+        "smd",
+        "sms",
+        "toc",
+        "vgm",
+        "vgz",
+        "wav"
+      ]
+    },
+    "jaguar": {
+      "name": "Atari Jaguar",
+      "cores": [
+        "game.libretro.virtualjaguar"
+      ],
+      "extensions": [
+        "abs",
+        "bin",
+        "cdi",
+        "chd",
+        "cof",
+        "cue",
+        "j64",
+        "jag",
+        "prg",
+        "rom"
+      ]
+    },
+    "lynx": {
+      "name": "Atari Lynx",
+      "cores": [
+        "game.libretro.handy",
+        "game.libretro.beetle-lynx"
+      ],
+      "extensions": [
+        "bll",
+        "lnx",
+        "lyx",
+        "o"
+      ]
+    },
+    "msx": {
+      "name": "MSX",
+      "cores": [
+        "game.libretro.bluemsx"
+      ],
+      "extensions": [
+        "cas",
+        "col",
+        "dsk",
+        "m3u",
+        "mx1",
+        "mx2",
+        "ri",
+        "rom",
+        "sc",
+        "sf",
+        "sg"
+      ]
+    },
+    "msx-turbo": {
+      "name": "MSX turbo R",
+      "cores": [
+        "game.libretro.bluemsx"
+      ],
+      "extensions": [
+        "cas",
+        "col",
+        "dsk",
+        "m3u",
+        "mx1",
+        "mx2",
+        "ri",
+        "rom",
+        "sc",
+        "sf",
+        "sg"
+      ]
+    },
+    "msx2": {
+      "name": "MSX2",
+      "cores": [
+        "game.libretro.bluemsx"
+      ],
+      "extensions": [
+        "cas",
+        "col",
+        "dsk",
+        "m3u",
+        "mx1",
+        "mx2",
+        "ri",
+        "rom",
+        "sc",
+        "sf",
+        "sg"
+      ]
+    },
+    "msx2plus": {
+      "name": "MSX2+",
+      "cores": [
+        "game.libretro.bluemsx"
+      ],
+      "extensions": [
+        "cas",
+        "col",
+        "dsk",
+        "m3u",
+        "mx1",
+        "mx2",
+        "ri",
+        "rom",
+        "sc",
+        "sf",
+        "sg"
+      ]
+    },
+    "n64": {
+      "name": "Nintendo 64",
+      "cores": [
+        "game.libretro.mupen64plus-nx"
+      ],
+      "extensions": [
+        "bin",
+        "n64",
+        "u1",
+        "v64",
+        "z64"
+      ]
+    },
+    "nds": {
+      "name": "Nintendo DS",
+      "cores": [
+        "game.libretro.melonds"
+      ],
+      "extensions": [
+        "dsi",
+        "ids",
+        "nds"
+      ]
+    },
+    "neo-geo-pocket": {
+      "name": "Neo Geo Pocket",
+      "cores": [
+        "game.libretro.beetle-ngp"
+      ],
+      "extensions": [
+        "ngc",
+        "ngp",
+        "ngpc",
+        "npc"
+      ]
+    },
+    "neo-geo-pocket-color": {
+      "name": "Neo Geo Pocket Color",
+      "cores": [
+        "game.libretro.beetle-ngp"
+      ],
+      "extensions": [
+        "ngc",
+        "ngp",
+        "ngpc",
+        "npc"
+      ]
+    },
+    "nes": {
+      "name": "Nintendo Entertainment System",
+      "cores": [
+        "game.libretro.mesen",
+        "game.libretro.nestopia",
+        "game.libretro.fceumm",
+        "game.libretro.quicknes"
+      ],
+      "extensions": [
+        "fds",
+        "nes",
+        "nsf",
+        "unf",
+        "unif"
+      ]
+    },
+    "ngc": {
+      "name": "Nintendo GameCube",
+      "cores": [
+        "game.libretro.dolphin"
+      ],
+      "extensions": [
+        "ciso",
+        "dol",
+        "elf",
+        "gcm",
+        "gcz",
+        "iso",
+        "m3u",
+        "rvz",
+        "tgc",
+        "wad",
+        "wbfs",
+        "wia"
+      ]
+    },
+    "nintendo-dsi": {
+      "name": "Nintendo DSi",
+      "cores": [
+        "game.libretro.melonds"
+      ],
+      "extensions": [
+        "dsi",
+        "ids",
+        "nds"
+      ]
+    },
+    "odyssey-2": {
+      "name": "Magnavox Odyssey 2",
+      "cores": [
+        "game.libretro.o2em"
+      ],
+      "extensions": [
+        "bin"
+      ]
+    },
+    "pc-fx": {
+      "name": "NEC PC-FX",
+      "cores": [
+        "game.libretro.beetle-pcfx"
+      ],
+      "extensions": [
+        "ccd",
+        "chd",
+        "cue",
+        "toc"
+      ]
+    },
+    "pokemon-mini": {
+      "name": "Pokemon Mini",
+      "cores": [
+        "game.libretro.pokemini"
+      ],
+      "extensions": [
+        "min"
+      ]
+    },
+    "psx": {
+      "name": "Sony PlayStation",
+      "cores": [
+        "game.libretro.beetle-psx",
+        "game.libretro.swanstation",
+        "game.libretro.pcsx-rearmed"
+      ],
+      "extensions": [
+        "bin",
+        "cbn",
+        "ccd",
+        "chd",
+        "cue",
+        "ecm",
+        "exe",
+        "img",
+        "iso",
+        "m3u",
+        "mdf",
+        "mds",
+        "pbp",
+        "psexe",
+        "psf",
+        "toc"
+      ]
+    },
+    "saturn": {
+      "name": "Sega Saturn",
+      "cores": [
+        "game.libretro.beetle-saturn",
+        "game.libretro.yabasanshiro",
+        "game.libretro.yabause"
+      ],
+      "extensions": [
+        "ccd",
+        "chd",
+        "cue",
+        "iso",
+        "m3u",
+        "mds",
+        "toc",
+        "zip"
+      ]
+    },
+    "sega32": {
+      "name": "Sega 32X",
+      "cores": [
+        "game.libretro.blastem"
+      ],
+      "extensions": [
+        "32x",
+        "bin",
+        "chd",
+        "col",
+        "cue",
+        "flac",
+        "gen",
+        "gg",
+        "gz",
+        "iso",
+        "md",
+        "rom",
+        "sc",
+        "sc3",
+        "sf7",
+        "sg",
+        "sg1",
+        "smd",
+        "sms",
+        "toc",
+        "vgm",
+        "vgz",
+        "wav"
+      ]
+    },
+    "segacd": {
+      "name": "Sega CD / Mega-CD",
+      "cores": [
+        "game.libretro.blastem"
+      ],
+      "extensions": [
+        "32x",
+        "bin",
+        "chd",
+        "col",
+        "cue",
+        "flac",
+        "gen",
+        "gg",
+        "gz",
+        "iso",
+        "md",
+        "rom",
+        "sc",
+        "sc3",
+        "sf7",
+        "sg",
+        "sg1",
+        "smd",
+        "sms",
+        "toc",
+        "vgm",
+        "vgz",
+        "wav"
+      ]
+    },
+    "sfam": {
+      "name": "Super Famicom",
+      "cores": [
+        "game.libretro.mesen-s",
+        "game.libretro.supafaust",
+        "game.libretro.beetle-bsnes"
+      ],
+      "extensions": [
+        "bs",
+        "fig",
+        "gb",
+        "gbc",
+        "sfc",
+        "smc",
+        "st",
+        "swc"
+      ]
+    },
+    "sg1000": {
+      "name": "Sega SG-1000",
+      "cores": [
+        "game.libretro.gearsystem",
+        "game.libretro.blastem",
+        "game.libretro.bluemsx"
+      ],
+      "extensions": [
+        "32x",
+        "bin",
+        "cas",
+        "chd",
+        "col",
+        "cue",
+        "dsk",
+        "flac",
+        "gen",
+        "gg",
+        "gz",
+        "iso",
+        "m3u",
+        "md",
+        "mv",
+        "mx1",
+        "mx2",
+        "ri",
+        "rom",
+        "sc",
+        "sc3",
+        "sf",
+        "sf7",
+        "sg",
+        "sg1",
+        "smd",
+        "sms",
+        "toc",
+        "vgm",
+        "vgz",
+        "wav"
+      ]
+    },
+    "sms": {
+      "name": "Sega Master System",
+      "cores": [
+        "game.libretro.gearsystem",
+        "game.libretro.blastem"
+      ],
+      "extensions": [
+        "32x",
+        "bin",
+        "chd",
+        "col",
+        "cue",
+        "flac",
+        "gen",
+        "gg",
+        "gz",
+        "iso",
+        "md",
+        "mv",
+        "rom",
+        "sc",
+        "sc3",
+        "sf7",
+        "sg",
+        "sg1",
+        "smd",
+        "sms",
+        "toc",
+        "vgm",
+        "vgz",
+        "wav"
+      ]
+    },
+    "snes": {
+      "name": "Super Nintendo Entertainment System",
+      "cores": [
+        "game.libretro.mesen-s",
+        "game.libretro.supafaust",
+        "game.libretro.beetle-bsnes"
+      ],
+      "extensions": [
+        "bs",
+        "fig",
+        "gb",
+        "gbc",
+        "sfc",
+        "smc",
+        "st",
+        "swc"
+      ]
+    },
+    "supergrafx": {
+      "name": "PC Engine SuperGrafx",
+      "cores": [
+        "game.libretro.beetle-supergrafx",
+        "game.libretro.beetle-pce"
+      ],
+      "extensions": [
+        "ccd",
+        "chd",
+        "cue",
+        "m3u",
+        "pce",
+        "sgx",
+        "toc"
+      ]
+    },
+    "swancrystal": {
+      "name": "SwanCrystal",
+      "cores": [
+        "game.libretro.beetle-wswan"
+      ],
+      "extensions": [
+        "pc2",
+        "ws",
+        "wsc"
+      ]
+    },
+    "tg16": {
+      "name": "TurboGrafx-16 / PC Engine",
+      "cores": [
+        "game.libretro.beetle-pce",
+        "game.libretro.beetle-supergrafx"
+      ],
+      "extensions": [
+        "ccd",
+        "chd",
+        "cue",
+        "m3u",
+        "pce",
+        "sgx",
+        "toc"
+      ]
+    },
+    "turbografx-cd": {
+      "name": "TurboGrafx-CD / PC Engine CD",
+      "cores": [
+        "game.libretro.beetle-pce",
+        "game.libretro.beetle-supergrafx"
+      ],
+      "extensions": [
+        "ccd",
+        "chd",
+        "cue",
+        "m3u",
+        "pce",
+        "sgx",
+        "toc"
+      ]
+    },
+    "videopac-g7400": {
+      "name": "Philips Videopac+ G7400",
+      "cores": [
+        "game.libretro.o2em"
+      ],
+      "extensions": [
+        "bin"
+      ]
+    },
+    "virtualboy": {
+      "name": "Virtual Boy",
+      "cores": [
+        "game.libretro.beetle-vb"
+      ],
+      "extensions": [
+        "bin",
+        "vb",
+        "vboy"
+      ]
+    },
+    "wii": {
+      "name": "Nintendo Wii",
+      "cores": [
+        "game.libretro.dolphin"
+      ],
+      "extensions": [
+        "ciso",
+        "dol",
+        "elf",
+        "gcm",
+        "gcz",
+        "iso",
+        "m3u",
+        "rvz",
+        "tgc",
+        "wad",
+        "wbfs",
+        "wia"
+      ]
+    },
+    "wonderswan": {
+      "name": "WonderSwan",
+      "cores": [
+        "game.libretro.beetle-wswan"
+      ],
+      "extensions": [
+        "pc2",
+        "ws",
+        "wsc"
+      ]
+    },
+    "wonderswan-color": {
+      "name": "WonderSwan Color",
+      "cores": [
+        "game.libretro.beetle-wswan"
+      ],
+      "extensions": [
+        "pc2",
+        "ws",
+        "wsc"
+      ]
+    }
+  },
+  "aliases": {
+    "32x": "sega32",
+    "atari": "atari-st",
+    "atari-2600": "atari2600",
+    "atari-5200": "atari5200",
+    "atari-7800": "atari7800",
+    "atari-8-bit": "atari8bit",
+    "atari-jaguar": "jaguar",
+    "atarijaguar": "jaguar",
+    "atarist": "atari-st",
+    "cdtv": "commodore-cdtv",
+    "coleco": "colecovision",
+    "famicom-disk-system": "fds",
+    "game-gear": "gamegear",
+    "gameandwatch": "g-and-w",
+    "gameboy": "gb",
+    "gameboy-advance": "gba",
+    "gameboy-color": "gbc",
+    "gamecube": "ngc",
+    "gc": "ngc",
+    "genesis-slash-megadrive": "genesis",
+    "mastersystem": "sms",
+    "mega-cd": "segacd",
+    "mega-drive": "genesis",
+    "megacd": "segacd",
+    "megadrive": "genesis",
+    "msdos": "dos",
+    "ngp": "neo-geo-pocket",
+    "ngpc": "neo-geo-pocket-color",
+    "nintendo-64": "n64",
+    "nintendo-ds": "nds",
+    "nintendo-entertainment-system": "nes",
+    "o2em": "odyssey-2",
+    "odyssey2": "odyssey-2",
+    "pc-dos": "dos",
+    "pce": "tg16",
+    "pcengine": "tg16",
+    "pcfx": "pc-fx",
+    "playstation": "psx",
+    "playstation-1": "psx",
+    "pokemini": "pokemon-mini",
+    "prboom": "doom",
+    "ps": "psx",
+    "ps1": "psx",
+    "psone": "psx",
+    "sega-32x": "sega32",
+    "sega-cd": "segacd",
+    "sega-genesis": "genesis",
+    "sega-master-system": "sms",
+    "sega-saturn": "saturn",
+    "sega32x": "sega32",
+    "sfc": "sfam",
+    "sg-1000": "sg1000",
+    "sgfx": "supergrafx",
+    "super-famicom": "sfam",
+    "super-nintendo": "snes",
+    "supernintendo": "snes",
+    "turbo-grafx": "tg16",
+    "turbografx-16-slash-pc-engine": "tg16",
+    "turbografx-16-slash-pc-engine-cd": "turbografx-cd",
+    "turbografx16": "tg16",
+    "turbografx16--1": "tg16",
+    "vb": "virtualboy",
+    "virtual-boy": "virtualboy",
+    "wswan": "wonderswan",
+    "wswanc": "wonderswan-color"
+  },
+  "_unmapped_cores": [
+    "game.libretro.2048",
+    "game.libretro.mrboom",
+    "game.libretro.nx",
+    "game.libretro.tyrquake"
+  ],
+  "_notes": "Sources: Kodi core ids/extensions from each game.libretro.* addon.xml in the tv.kodi.Kodi flatpak build; slugs validated against RomM backend/utils/platform_slugs.py (UniversalPlatformSlug); aliases from RomM alembic 0046_migrate_platform_slugs.py OLD_SLUGS_TO_NEW_MAP, backend/utils/platform_aliases.py PLATFORM_FS_ALIASES (Batocera/RetroBat/ES-DE folder names), Grout bios/data/platform_cores.json fs_slugs and common IGDB-era slugs. Core preference was cross-checked against Grout platform_cores.json and RomM frontend _EJS_CORES_MAP. Ordering is best-first for a TV box: accuracy and compatibility over speed (beetle-psx > swanstation > pcsx-rearmed; beetle-saturn > yabasanshiro > yabause; mesen-s > supafaust > beetle-bsnes as no snes9x core exists in Kodi; mesen > nestopia > fceumm > quicknes; mgba > vbam > beetle-gba; gambatte > sameboy > mgba for GB/GBC), except lynx where handy is first because it boots without lynxboot.img, and dos where dosbox-pure is first for zip/gamepad support. sega32 and segacd map to blastem only because it is the sole Kodi core declaring those extensions; BlastEm's 32X/Mega-CD support is incomplete. extensions is the lowercase union of the listed cores' addon.xml extensions with the '/' directory marker dropped."
+}

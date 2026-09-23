@@ -1,0 +1,319 @@
+# Kodi Media Center language file
+# Addon Name: RomM
+# Addon id: plugin.program.romm
+# Addon Provider: kel-mo
+msgid ""
+msgstr ""
+"Project-Id-Version: plugin.program.romm\n"
+"Report-Msgid-Bugs-To: https://github.com/kel-mo/plugin.program.romm/issues\n"
+"POT-Creation-Date: 2026-09-23 00:00+0000\n"
+"PO-Revision-Date: 2026-09-23 00:00+0000\n"
+"Last-Translator: Kodi Translation Team\n"
+"Language-Team: English (United Kingdom)\n"
+"Language: en_GB\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# Menu items 30000-30099
+
+msgctxt "#30000"
+msgid "Platforms"
+msgstr ""
+
+msgctxt "#30001"
+msgid "Collections"
+msgstr ""
+
+msgctxt "#30002"
+msgid "Recently played"
+msgstr ""
+
+msgctxt "#30003"
+msgid "Favourites"
+msgstr ""
+
+msgctxt "#30004"
+msgid "Search"
+msgstr ""
+
+msgctxt "#30005"
+msgid "Pair with RomM server"
+msgstr ""
+
+msgctxt "#30006"
+msgid "Next page"
+msgstr ""
+
+msgctxt "#30007"
+msgid "Settings"
+msgstr ""
+
+msgctxt "#30008"
+msgid "Random game"
+msgstr ""
+
+msgctxt "#30009"
+msgid "Smart collections"
+msgstr ""
+
+msgctxt "#30010"
+msgid "Choose emulator for this platform"
+msgstr ""
+
+msgctxt "#30011"
+msgid "Remove from cache"
+msgstr ""
+
+msgctxt "#30012"
+msgid "Game details"
+msgstr ""
+
+msgctxt "#30013"
+msgid "Let Kodi choose"
+msgstr ""
+
+msgctxt "#30014"
+msgid "[no emulator installed]"
+msgstr ""
+
+msgctxt "#30015"
+msgid "Download only"
+msgstr ""
+
+# Settings: server 30100-30199
+
+msgctxt "#30100"
+msgid "Server"
+msgstr ""
+
+msgctxt "#30101"
+msgid "RomM server URL"
+msgstr ""
+
+msgctxt "#30102"
+msgid "For example https://romm.example.org"
+msgstr ""
+
+msgctxt "#30103"
+msgid "Pair with server (device code)"
+msgstr ""
+
+msgctxt "#30104"
+msgid "Shows a short code to approve this Kodi in the RomM web interface."
+msgstr ""
+
+msgctxt "#30105"
+msgid "Pair with a code from RomM (Client API tokens)"
+msgstr ""
+
+msgctxt "#30106"
+msgid "Enter the 8-digit pairing code generated under Settings > Client API tokens in RomM."
+msgstr ""
+
+msgctxt "#30107"
+msgid "Sign out"
+msgstr ""
+
+msgctxt "#30108"
+msgid "Signed in as"
+msgstr ""
+
+# Settings: playback 30200-30299
+
+msgctxt "#30200"
+msgid "Playback"
+msgstr ""
+
+msgctxt "#30201"
+msgid "Always start the preferred emulator"
+msgstr ""
+
+msgctxt "#30202"
+msgid "When disabled, Kodi shows its own emulator and save state selection before the game starts."
+msgstr ""
+
+msgctxt "#30203"
+msgid "Copy BIOS files from RomM before playing"
+msgstr ""
+
+msgctxt "#30204"
+msgid "Firmware stored on the RomM server for the platform is copied into the emulator's system directory."
+msgstr ""
+
+msgctxt "#30205"
+msgid "Reset emulator choices"
+msgstr ""
+
+msgctxt "#30206"
+msgid "Forget all per-platform emulator selections."
+msgstr ""
+
+# Settings: library 30300-30399
+
+msgctxt "#30300"
+msgid "Library"
+msgstr ""
+
+msgctxt "#30301"
+msgid "Games per page"
+msgstr ""
+
+msgctxt "#30302"
+msgid "Hide platforms without an installed emulator"
+msgstr ""
+
+msgctxt "#30303"
+msgid "Only list platforms that Kodi can play with its installed game add-ons."
+msgstr ""
+
+# Settings: cache 30400-30499
+
+msgctxt "#30400"
+msgid "Downloads"
+msgstr ""
+
+msgctxt "#30401"
+msgid "Download folder"
+msgstr ""
+
+msgctxt "#30402"
+msgid "Where downloaded games are kept. Leave empty to use the add-on data folder."
+msgstr ""
+
+msgctxt "#30403"
+msgid "Keep at most"
+msgstr ""
+
+msgctxt "#30404"
+msgid "Oldest games are removed when the download folder grows past this size. 0 disables the limit."
+msgstr ""
+
+msgctxt "#30405"
+msgid "{0:d} GB"
+msgstr ""
+
+msgctxt "#30406"
+msgid "Delete all downloaded games"
+msgstr ""
+
+# Settings: advanced 30500-30599
+
+msgctxt "#30500"
+msgid "Advanced"
+msgstr ""
+
+msgctxt "#30501"
+msgid "Debug logging"
+msgstr ""
+
+# Dialogs and notifications 30600-30699
+
+msgctxt "#30600"
+msgid "Not paired with a RomM server"
+msgstr ""
+
+msgctxt "#30601"
+msgid "Enter the RomM server URL in the add-on settings first."
+msgstr ""
+
+msgctxt "#30602"
+msgid "Open {0} and enter code"
+msgstr ""
+
+msgctxt "#30603"
+msgid "Waiting for approval..."
+msgstr ""
+
+msgctxt "#30604"
+msgid "Paired with {0}"
+msgstr ""
+
+msgctxt "#30605"
+msgid "Pairing failed"
+msgstr ""
+
+msgctxt "#30606"
+msgid "Pairing code"
+msgstr ""
+
+msgctxt "#30607"
+msgid "Signed out"
+msgstr ""
+
+msgctxt "#30608"
+msgid "Downloading {0}"
+msgstr ""
+
+msgctxt "#30609"
+msgid "{0} of {1}"
+msgstr ""
+
+msgctxt "#30610"
+msgid "Download failed"
+msgstr ""
+
+msgctxt "#30611"
+msgid "No emulator installed for {0}"
+msgstr ""
+
+msgctxt "#30612"
+msgid "Install a game add-on for this platform, for example {0}."
+msgstr ""
+
+msgctxt "#30613"
+msgid "Copying BIOS files"
+msgstr ""
+
+msgctxt "#30614"
+msgid "Server unreachable"
+msgstr ""
+
+msgctxt "#30615"
+msgid "Session expired, please pair again"
+msgstr ""
+
+msgctxt "#30616"
+msgid "Delete all downloaded games?"
+msgstr ""
+
+msgctxt "#30617"
+msgid "Download folder cleared"
+msgstr ""
+
+msgctxt "#30618"
+msgid "Removed from cache"
+msgstr ""
+
+msgctxt "#30619"
+msgid "Emulator choices reset"
+msgstr ""
+
+msgctxt "#30620"
+msgid "Extracting"
+msgstr ""
+
+msgctxt "#30621"
+msgid "Server version {0} is too old; RomM 5.0 or newer is required"
+msgstr ""
+
+msgctxt "#30622"
+msgid "Pairing code was rejected or has expired"
+msgstr ""
+
+msgctxt "#30623"
+msgid "Nothing to play in this game's files"
+msgstr ""
+
+msgctxt "#30624"
+msgid "Downloaded"
+msgstr ""
+
+msgctxt "#30625"
+msgid "No games found"
+msgstr ""
+
+msgctxt "#30626"
+msgid "Pair from the RomM web interface: Settings > Client API tokens > Pair a device"
+msgstr ""
