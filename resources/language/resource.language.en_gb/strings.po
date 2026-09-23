@@ -127,11 +127,11 @@ msgid "Playback"
 msgstr ""
 
 msgctxt "#30201"
-msgid "Always start the preferred emulator"
+msgid "Start the preferred emulator without asking"
 msgstr ""
 
 msgctxt "#30202"
-msgid "When disabled, Kodi shows its own emulator and save state selection before the game starts."
+msgid "When disabled, Kodi asks which emulator to use and offers saved states before every game. Saved states remain available from the in-game menu either way."
 msgstr ""
 
 msgctxt "#30203"

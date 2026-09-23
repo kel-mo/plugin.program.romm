@@ -85,7 +85,7 @@
       <group id="1">
         <setting id="pin_core" type="boolean" label="30201" help="30202">
           <level>0</level>
-          <default>false</default>
+          <default>true</default>
           <control type="toggle"/>
         </setting>
         <setting id="sync_bios" type="boolean" label="30203" help="30204">

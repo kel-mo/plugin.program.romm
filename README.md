@@ -19,8 +19,10 @@ repository. See the project notes for the phased plan.
 
 ## Requirements
 
-- Kodi 21 or newer (developed against Kodi 22 "Piers"); the Kodi flatpak beta
-  ships all the libretro cores this add-on maps to.
+- Kodi 22 "Piers" with the RetroPlayer fix that plays the resolved path of
+  plugin items (xbmc PR pending). Without it Kodi reports the game as not
+  compatible with any emulator. The Kodi flatpak beta ships all the libretro
+  cores this add-on maps to.
 - RomM 5.0 or newer.
 
 ## Install (sideload)

@@ -199,6 +199,7 @@ class RommClient:
         """Covers/logos: RomM returns either absolute URLs or resource paths."""
         if not path:
             return ''
+        path = quote(path, safe='/:?=&%+,@')       # cover paths carry "?ts=<date with spaces>"
         if path.startswith('http://') or path.startswith('https://'):
             return path
         if path.startswith('/'):

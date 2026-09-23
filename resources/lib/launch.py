@@ -107,6 +107,7 @@ def resolve(handle, rom_id):
         if rom.get('path_cover_large'):
             li.setArt({'thumb': client.asset_url(rom['path_cover_large'])})
         kodi.log('launching {} with {}'.format(launch_path, game_client or 'Kodi default'))
+        # needs Kodi with RetroPlayer playing the resolved (dyn) path, see patches in tv.kodi.Kodi
         xbmcplugin.setResolvedUrl(handle, True, li)
     except AuthError as e:
         _fail(handle, progress, str(e))
