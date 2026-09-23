@@ -123,10 +123,39 @@
     </category>
     <category id="sync" label="30700" help="">
       <group id="1">
+        <setting id="sync_saves" type="boolean" label="30701" help="30702">
+          <level>0</level>
+          <default>true</default>
+          <control type="toggle"/>
+        </setting>
+        <setting id="conflict_policy" type="string" label="30703" help="30704">
+          <level>0</level>
+          <default>newest</default>
+          <constraints>
+            <options>
+              <option label="30705">newest</option>
+              <option label="30706">server</option>
+              <option label="30707">kodi</option>
+            </options>
+          </constraints>
+          <dependencies>
+            <dependency type="enable" setting="sync_saves">true</dependency>
+          </dependencies>
+          <control type="list" format="string">
+            <heading>30703</heading>
+          </control>
+        </setting>
+      </group>
+      <group id="2">
         <setting id="report_play" type="boolean" label="30710" help="30711">
           <level>0</level>
           <default>true</default>
           <control type="toggle"/>
+        </setting>
+        <setting id="sync_now" type="action" label="30712" help="30713">
+          <level>0</level>
+          <data>RunPlugin(plugin://plugin.program.romm/?action=sync_now)</data>
+          <control type="button" format="action"/>
         </setting>
       </group>
     </category>

@@ -8,7 +8,7 @@ import xbmc
 import xbmcgui
 import xbmcplugin
 
-from . import auth, cache, cores, icons, kodi, launch
+from . import auth, cache, cores, device, icons, kodi, launch
 from .api import ApiError, AuthError, RommClient
 
 BASE = 'plugin://{}/'.format(kodi.ADDON_ID)
@@ -190,6 +190,22 @@ def details(client, rom_id):
     xbmcgui.Dialog().textviewer(kodi.L(30012), '\n'.join(lines))
 
 
+def sync_now(client):
+    from . import saves
+    progress = xbmcgui.DialogProgress()
+    progress.create(kodi.L(30720))
+    try:
+        uploaded, downloaded = device.with_device(
+            client, lambda device_id: saves.sync_all(client, device_id, lambda msg: progress.update(0, msg)))
+    except (NotImplementedError, ApiError) as e:
+        kodi.log('save sync failed: {}'.format(e), xbmc.LOGWARNING)
+        kodi.error(kodi.L(30722))
+        return
+    finally:
+        progress.close()
+    kodi.notify(kodi.L(30721, uploaded, downloaded))
+
+
 # --------------------------------------------------------------------- main
 def run(argv):
     global HANDLE
@@ -268,6 +284,8 @@ def dispatch(action, params):
         random_game(client)
     elif action == 'details':
         details(client, params['rom_id'])
+    elif action == 'sync_now':
+        sync_now(client)
     else:
         kodi.log('unknown action {}'.format(action), xbmc.LOGWARNING)
         end(False)

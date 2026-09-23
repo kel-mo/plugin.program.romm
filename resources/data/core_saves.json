@@ -1,0 +1,199 @@
+{
+  "_notes": "Keyed by Kodi core id. mode 'kodi': the core exposes RETRO_MEMORY_SAVE_RAM, so Kodi writes Savestates/InGameSaves/<rom file name>.sav itself; 'core': the core writes <rom stem>.<ext> into addon_data/<core>/save/; 'none': the core keeps no in-game saves. multi: saves are folders or shared files, never synced. Derived from retro_get_memory_size() and save-path code of each core's libretro source; _unverified: the mode depends on a core option (memory card type) whose default was not checked.",
+  "game.libretro.2048": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.a5200": {
+    "mode": "none"
+  },
+  "game.libretro.atari800": {
+    "mode": "none"
+  },
+  "game.libretro.beetle-bsnes": {
+    "ext": "srm",
+    "mode": "core"
+  },
+  "game.libretro.beetle-gba": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.beetle-lynx": {
+    "mode": "none"
+  },
+  "game.libretro.beetle-ngp": {
+    "ext": "flash",
+    "mode": "core"
+  },
+  "game.libretro.beetle-pce": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.beetle-pcfx": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.beetle-psx": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.beetle-saturn": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.beetle-supergrafx": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.beetle-vb": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.beetle-wswan": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.blastem": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.bluemsx": {
+    "mode": "core",
+    "multi": true
+  },
+  "game.libretro.dolphin": {
+    "mode": "core",
+    "multi": true
+  },
+  "game.libretro.dosbox": {
+    "mode": "core",
+    "multi": true
+  },
+  "game.libretro.dosbox-pure": {
+    "mode": "core",
+    "multi": true
+  },
+  "game.libretro.fceumm": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.gambatte": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.gearsystem": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.gw": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.handy": {
+    "ext": "eeprom",
+    "mode": "core"
+  },
+  "game.libretro.hatari": {
+    "mode": "core",
+    "multi": true
+  },
+  "game.libretro.melonds": {
+    "ext": "sav",
+    "mode": "core"
+  },
+  "game.libretro.mesen": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.mesen-s": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.mgba": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.mrboom": {
+    "mode": "none"
+  },
+  "game.libretro.mupen64plus-nx": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.nestopia": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.nx": {
+    "mode": "core",
+    "multi": true
+  },
+  "game.libretro.o2em": {
+    "mode": "none"
+  },
+  "game.libretro.pcsx-rearmed": {
+    "_unverified": true,
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.pokemini": {
+    "ext": "eep",
+    "mode": "core"
+  },
+  "game.libretro.prboom": {
+    "mode": "core",
+    "multi": true
+  },
+  "game.libretro.prosystem": {
+    "mode": "none"
+  },
+  "game.libretro.quicknes": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.sameboy": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.stella": {
+    "_unverified": true,
+    "mode": "none"
+  },
+  "game.libretro.supafaust": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.swanstation": {
+    "_unverified": true,
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.tgbdual": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.tyrquake": {
+    "mode": "core",
+    "multi": true
+  },
+  "game.libretro.uae": {
+    "mode": "core",
+    "multi": true
+  },
+  "game.libretro.vbam": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.virtualjaguar": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.yabasanshiro": {
+    "mode": "core",
+    "multi": true
+  },
+  "game.libretro.yabause": {
+    "ext": "srm",
+    "mode": "core"
+  }
+}

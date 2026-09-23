@@ -324,6 +324,34 @@ msgctxt "#30700"
 msgid "Saves and activity"
 msgstr ""
 
+msgctxt "#30701"
+msgid "Sync in-game saves with RomM"
+msgstr ""
+
+msgctxt "#30702"
+msgid "Download the latest save before a game starts and upload it when the game ends. Save states stay on this device."
+msgstr ""
+
+msgctxt "#30703"
+msgid "When both sides changed a save"
+msgstr ""
+
+msgctxt "#30704"
+msgid "The copy that loses is still kept: uploaded to RomM as an archived save and backed up locally."
+msgstr ""
+
+msgctxt "#30705"
+msgid "Keep the newest"
+msgstr ""
+
+msgctxt "#30706"
+msgid "Keep the RomM copy"
+msgstr ""
+
+msgctxt "#30707"
+msgid "Keep the Kodi copy"
+msgstr ""
+
 msgctxt "#30710"
 msgid "Report play time to RomM"
 msgstr ""
@@ -332,6 +360,31 @@ msgctxt "#30711"
 msgid "Shows this Kodi as playing in RomM and records play sessions and last played."
 msgstr ""
 
+msgctxt "#30712"
+msgid "Sync saves now"
+msgstr ""
+
+msgctxt "#30713"
+msgid "Negotiate saves for every downloaded game with the RomM server."
+msgstr ""
+
+msgctxt "#30720"
+msgid "Syncing saves"
+msgstr ""
+
+msgctxt "#30721"
+msgid "Saves synced: {0} uploaded, {1} downloaded"
+msgstr ""
+
+msgctxt "#30722"
+msgid "Save sync failed"
+msgstr ""
+
+msgctxt "#30723"
+msgid "Save conflict for {0}: kept {1}"
+msgstr ""
+
 msgctxt "#30724"
 msgid "Registered with RomM as {0}"
 msgstr ""
+

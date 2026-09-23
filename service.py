@@ -6,7 +6,8 @@ from collections import deque
 
 import xbmc
 
-from resources.lib import auth, cache, kodi
+from resources.lib import auth, cache, device, kodi
+from resources.lib.api import ApiError, RommClient
 from resources.lib.sessions import PlayTracker
 
 
@@ -50,6 +51,24 @@ class GamePlayer(xbmc.Player):
         self._stopped()
 
 
+def push_saves(rom_id):
+    from resources.lib import saves
+    client = RommClient()
+    try:
+        rom = client.rom(rom_id)
+        uploaded, downloaded = device.with_device(
+            client, lambda device_id: saves.sync_rom(client, rom=rom, device_id=device_id, direction='push'))
+    except ApiError as e:
+        kodi.log('save sync for rom {} failed: {}'.format(rom_id, e), xbmc.LOGWARNING)
+        kodi.error(kodi.L(30722))
+        return
+    except Exception:
+        kodi.log('save sync for rom {} failed: {}'.format(rom_id, traceback.format_exc()), xbmc.LOGERROR)
+        return
+    if uploaded + downloaded:
+        kodi.notify(kodi.L(30721, uploaded, downloaded), time=2500)
+
+
 def step(player, tracker):
     if not auth.is_paired():
         player.events.clear()
@@ -61,7 +80,10 @@ def step(player, tracker):
         if event == 'start':
             tracker.start(rom_id)
             continue
+        played = tracker.rom_id
         tracker.stop()
+        if played is not None and kodi.setting_bool('sync_saves'):
+            push_saves(played)
     tracker.tick()
 
 

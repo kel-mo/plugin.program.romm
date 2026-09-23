@@ -38,6 +38,9 @@ class Progress:
     def bios(self, index, count, name):
         self.dialog.update(0, '{}: {} ({}/{})'.format(kodi.L(30613), name, index, count))
 
+    def text(self, msg):
+        self.dialog.update(0, msg)
+
     def close(self):
         self.dialog.close()
 
@@ -78,6 +81,9 @@ def prepare(rom, client, progress, want_play=True):
     if not launch_path:
         raise ApiError(kodi.L(30623))
 
+    if want_play and kodi.setting_bool('sync_saves'):
+        _pull_saves(rom, client, progress, launch_path, installed)
+
     if candidates and kodi.setting_bool('sync_bios'):
         try:
             bios.mirror(client, {'id': rom['platform_id'], 'slug': slug}, candidates, progress.bios)
@@ -90,6 +96,15 @@ def prepare(rom, client, progress, want_play=True):
     if candidates and cores.user_choices().get(cores.canonical_slug(slug)) == candidates[0]:
         pinned = candidates[0]
     return launch_path, pinned
+
+
+def _pull_saves(rom, client, progress, launch_path, installed):
+    try:
+        from . import device, saves
+        saves.sync_rom(client, rom, device.ensure_device(client), 'pull', progress=progress.text,
+                       launch_path=launch_path, installed=installed)
+    except Exception as e:  # never block a launch on save sync
+        kodi.log('save sync before launch failed: {}'.format(e), xbmc.LOGWARNING)
 
 
 def resolve(handle, rom_id):
