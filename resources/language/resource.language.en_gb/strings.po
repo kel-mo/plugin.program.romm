@@ -317,3 +317,11 @@ msgstr ""
 msgctxt "#30626"
 msgid "Pair from the RomM web interface: Settings > Client API tokens > Pair a device"
 msgstr ""
+
+msgctxt "#30627"
+msgid "Scan the code with your phone, or open this page and enter the code:"
+msgstr ""
+
+msgctxt "#30628"
+msgid "Press Back to cancel"
+msgstr ""

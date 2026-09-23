@@ -6,6 +6,9 @@
         <setting id="server_url" type="string" label="30101" help="30102">
           <level>0</level>
           <default></default>
+          <constraints>
+            <allowempty>true</allowempty>
+          </constraints>
           <control type="edit" format="string">
             <heading>30101</heading>
           </control>
@@ -13,12 +16,16 @@
         <setting id="pair" type="action" label="30103" help="30104">
           <level>0</level>
           <data>RunPlugin(plugin://plugin.program.romm/?action=pair)</data>
-          <control type="button" format="action"/>
+          <control type="button" format="action">
+            <close>true</close>
+          </control>
         </setting>
         <setting id="pair_code" type="action" label="30105" help="30106">
           <level>0</level>
           <data>RunPlugin(plugin://plugin.program.romm/?action=pair_code)</data>
-          <control type="button" format="action"/>
+          <control type="button" format="action">
+            <close>true</close>
+          </control>
         </setting>
         <setting id="signout" type="action" label="30107" help="">
           <level>0</level>
