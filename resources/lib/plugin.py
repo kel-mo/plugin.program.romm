@@ -8,7 +8,7 @@ import xbmc
 import xbmcgui
 import xbmcplugin
 
-from . import auth, cache, cores, kodi, launch
+from . import auth, cache, cores, icons, kodi, launch
 from .api import ApiError, AuthError, RommClient
 
 BASE = 'plugin://{}/'.format(kodi.ADDON_ID)
@@ -79,7 +79,7 @@ def platforms(client):
         if not supported:
             label += ' ' + kodi.L(30014)
         context = [(kodi.L(30010), run_plugin('choose_core', slug=slug, name=name))]
-        folder(label, 'roms', client.asset_url(p.get('url_logo')), context=context,
+        folder(label, 'roms', icons.platform_icon(client, p), context=context,
                platform_id=p['id'], slug=slug, name=name)
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_NONE)
     end()

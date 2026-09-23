@@ -68,7 +68,7 @@ class RommClient:
             h.update(extra)
         return h
 
-    def request(self, method, path, params=None, body=None, auth=True, timeout=TIMEOUT):
+    def request(self, method, path, params=None, body=None, auth=True, timeout=TIMEOUT, raw=False):
         if not self.base_url:
             raise ApiError(kodi.L(30601))
         url = self.url(path, **(params or {}))
@@ -92,6 +92,8 @@ class RommClient:
             raise ApiError('HTTP {} for {}: {}'.format(e.code, path, detail or e.reason), e.code, detail)
         except (URLError, socket.timeout, OSError) as e:
             raise ApiError('{}: {}'.format(kodi.L(30614), e))
+        if raw:
+            return resp
         payload = resp.read()
         resp.close()
         if not payload:
