@@ -11,6 +11,7 @@ from .api import ApiError, RommClient
 
 QUEUE = 'play-sessions.json'
 HEARTBEAT_EVERY = 30
+SERVICE_TIMEOUT = 10                    # short: the service must never sit in a socket at shutdown
 BATCH = 100
 MAX_ATTEMPTS = 5
 FAILED = object()
@@ -40,7 +41,7 @@ class PlayTracker:
         self.queue = kodi.read_json(self.path) or []
 
     def _client(self):
-        return self.fixed_client or RommClient()
+        return self.fixed_client or RommClient(timeout=SERVICE_TIMEOUT)
 
     def _save(self):
         kodi.write_json(self.path, self.queue)
@@ -77,7 +78,8 @@ class PlayTracker:
         rom_id = self.rom_id
         self._call('heartbeat', lambda c, d: c.heartbeat_playing(rom_id, d))
 
-    def stop(self):
+    def stop(self, network=True):
+        """network=False (Kodi shutting down): only queue to disk; the heartbeat expires server-side."""
         if self.rom_id is None:
             return
         rom_id, started, ended = self.rom_id, self.started, _now()
@@ -90,6 +92,8 @@ class PlayTracker:
                                'end_time': _iso(ended), 'duration_ms': int(duration.total_seconds() * 1000),
                                'attempts': 0})
             self._save()
+        if not network:
+            return
         self._call('heartbeat clear', lambda c, d: c.heartbeat_clear(d))
         self.flush()
 

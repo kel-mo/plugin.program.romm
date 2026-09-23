@@ -49,10 +49,22 @@ def parse_version(text):
     return tuple(parts)
 
 
+_monitor = None
+
+
+def aborting():
+    """True once Kodi is shutting down; every request checks it so no call outlives teardown."""
+    global _monitor
+    if _monitor is None:
+        _monitor = xbmc.Monitor()
+    return _monitor.abortRequested()
+
+
 class RommClient:
-    def __init__(self, base_url=None, token=None):
+    def __init__(self, base_url=None, token=None, timeout=TIMEOUT):
         self.base_url = (base_url or kodi.setting('server_url')).strip().rstrip('/')
         self.token = token if token is not None else kodi.setting('token')
+        self.timeout = timeout
         self.ssl_ctx = ssl.create_default_context()
 
     # ------------------------------------------------------------------ core
@@ -70,11 +82,13 @@ class RommClient:
             h.update(extra)
         return h
 
-    def request(self, method, path, params=None, body=None, auth=True, timeout=TIMEOUT, raw=False,
+    def request(self, method, path, params=None, body=None, auth=True, timeout=None, raw=False,
                 files=None):
         """files: {field: (filename, bytes)} sends multipart/form-data instead of JSON."""
         if not self.base_url:
             raise ApiError(kodi.L(30601))
+        if aborting():
+            raise ApiError('cancelled')
         url = self.url(path, **(params or {}))
         data = None
         extra = {}
@@ -87,7 +101,7 @@ class RommClient:
         req = Request(url, data=data, headers=self.headers(auth, extra), method=method)
         kodi.debug('{} {}'.format(method, url))
         try:
-            resp = urlopen(req, timeout=timeout, context=self.ssl_ctx)
+            resp = urlopen(req, timeout=timeout or self.timeout, context=self.ssl_ctx)
         except HTTPError as e:
             detail = None
             try:
@@ -287,6 +301,8 @@ class RommClient:
 
     def download(self, url, dest, expected_size=None, progress=None):
         """Stream url to dest with resume support. progress(done, total) -> False cancels."""
+        if aborting():
+            raise ApiError('cancelled')
         kodi.ensure_dir(os.path.dirname(dest))
         part = dest + '.part'
         done = os.path.getsize(part) if os.path.exists(part) else 0
@@ -296,7 +312,7 @@ class RommClient:
         extra = {'Range': 'bytes={}-'.format(done)} if done else {}
         req = Request(url, headers=self.headers(True, extra))
         try:
-            resp = urlopen(req, timeout=TIMEOUT, context=self.ssl_ctx)
+            resp = urlopen(req, timeout=self.timeout, context=self.ssl_ctx)
         except HTTPError as e:
             if e.code == 416 and done and (not expected_size or done == expected_size):
                 os.replace(part, dest)          # server says we already have it all
@@ -317,7 +333,6 @@ class RommClient:
             total = int(length) + done
         mode = 'ab' if done else 'wb'
         last = 0
-        monitor = xbmc.Monitor()
         with open(part, mode) as f:
             while True:
                 chunk = resp.read(CHUNK)
@@ -328,7 +343,7 @@ class RommClient:
                 now = time.time()
                 if now - last > 0.25:
                     last = now
-                    if monitor.abortRequested() or (progress and progress(done, total) is False):
+                    if aborting() or (progress and progress(done, total) is False):
                         resp.close()
                         raise ApiError('cancelled')
         resp.close()

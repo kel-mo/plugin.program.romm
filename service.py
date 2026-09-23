@@ -8,7 +8,7 @@ import xbmc
 
 from resources.lib import auth, cache, device, kodi
 from resources.lib.api import ApiError, RommClient
-from resources.lib.sessions import PlayTracker
+from resources.lib.sessions import SERVICE_TIMEOUT, PlayTracker
 
 
 class GamePlayer(xbmc.Player):
@@ -53,7 +53,7 @@ class GamePlayer(xbmc.Player):
 
 def push_saves(rom_id):
     from resources.lib import saves
-    client = RommClient()
+    client = RommClient(timeout=SERVICE_TIMEOUT)
     try:
         rom = client.rom(rom_id)
         uploaded, downloaded = device.with_device(
@@ -97,11 +97,10 @@ def run():
             step(player, tracker)
         except Exception:
             kodi.log(traceback.format_exc(), xbmc.LOGERROR)
+    # Kodi is shutting down: no network from here on, only queue the open session to disk.
+    # Pending uploads flush on the next start; the server-side heartbeat expires by itself.
     try:
-        if auth.is_paired() and tracker.rom_id is not None:
-            tracker.stop()                          # queues the session, clears heartbeat, flushes
-        elif auth.is_paired():
-            tracker.flush()
+        tracker.stop(network=False)
     except Exception:
         kodi.log(traceback.format_exc(), xbmc.LOGERROR)
 
