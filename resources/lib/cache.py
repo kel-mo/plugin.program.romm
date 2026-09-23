@@ -6,6 +6,8 @@ import shutil
 import time
 import zipfile
 
+import xbmcvfs
+
 from . import kodi
 from .cores import LAUNCH_PRIORITY
 
@@ -15,12 +17,22 @@ SKIP_CATEGORIES = {'manual', 'walkthrough', 'patch', 'cheat', 'soundtrack', 'scr
 
 
 def root():
-    path = kodi.setting('cache_path').strip()
-    if path:
-        path = os.path.normpath(os.path.expanduser(path))
-    else:
+    path = os.path.expanduser(xbmcvfs.translatePath(kodi.setting('cache_path').strip()))
+    if '://' in path:                                    # network VFS: plain file I/O can't use it
+        kodi.log('cache_path {} is not a local folder, using the add-on data folder'.format(path))
+        path = ''
+    if not path:
         path = os.path.join(kodi.PROFILE, 'cache')
-    return kodi.ensure_dir(path)
+    return kodi.ensure_dir(os.path.normpath(path))
+
+
+def safe_join(base, *parts):
+    """Join server-supplied names under base, refusing anything that escapes it."""
+    base = os.path.normpath(base)
+    path = os.path.normpath(os.path.join(base, *parts))
+    if path != base and not path.startswith(base + os.sep):
+        raise ValueError('unsafe path from server: {}'.format(os.path.join(*parts)))
+    return path
 
 
 def rom_dir(rom_id):
@@ -33,6 +45,11 @@ def marker_path(rom_id):
 
 def is_cached(rom_id):
     return os.path.exists(marker_path(rom_id))
+
+
+def cached_ids():
+    base = root()
+    return set(int(n) for n in os.listdir(base) if n.isdigit() and os.path.exists(os.path.join(base, n, MARKER)))
 
 
 def _ext(name):
@@ -68,14 +85,14 @@ def ensure_rom(rom, client, progress=None):
         subdir = os.path.join(directory, rom.get('fs_name_no_ext') or rom.get('fs_name') or 'game')
         total = len(files)
         for i, f in enumerate(files, 1):
-            dest = os.path.join(subdir, _relative_name(rom, f).replace('/', os.sep))
+            dest = safe_join(subdir, _relative_name(rom, f).replace('/', os.sep))
             if not (os.path.exists(dest) and os.path.getsize(dest) == (f.get('file_size_bytes') or -1)):
                 client.download(client.rom_file_url(f), dest, f.get('file_size_bytes'),
                                 progress and (lambda d, t, i=i, n=f['file_name']: progress(d, t, i, total, n)))
             local.append(dest)
     else:
         name = rom.get('fs_name') or (files[0]['file_name'] if files else str(rid))
-        dest = os.path.join(directory, name)
+        dest = safe_join(directory, name)
         size = rom.get('fs_size_bytes')
         if not (os.path.exists(dest) and size and os.path.getsize(dest) == size):
             url = client.rom_file_url(files[0]) if len(files) == 1 else client.rom_content_url(rom)
@@ -148,8 +165,12 @@ def pick_launch_file(local_files, supported_exts=None):
     return max(local_files, key=os.path.getsize)
 
 
+def _natural(name):
+    return [int(t) if t.isdigit() else t.lower() for t in re.split(r'(\d+)', name)]
+
+
 def write_m3u(discs):
-    discs = sorted(discs)
+    discs = sorted(discs, key=_natural)
     directory = os.path.dirname(discs[0])
     prefix = os.path.commonprefix([os.path.splitext(os.path.basename(d))[0] for d in discs])
     base = re.sub(r'[\s(\[\-_]*(disc|disk|cd|side)?[\s(\[\-_]*$', '', prefix, flags=re.I) or 'game'

@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """Prepare a ROM locally and hand it to RetroPlayer."""
 import os
+import traceback
 
+import xbmc
 import xbmcgui
 import xbmcplugin
 
@@ -26,7 +28,7 @@ class Progress:
     def files(self, done, total, index, count, name):
         if self.dialog.iscanceled():
             return False
-        pct = int(done * 100 / total) if total else 0
+        pct = min(100, int(done * 100 / total)) if total else 0
         line = '{}[CR]{}'.format(name, kodi.L(30609, _human(done), _human(total)) if total else _human(done))
         if count > 1:
             line = '{}/{}  {}'.format(index, count, line)
@@ -79,7 +81,7 @@ def prepare(rom, client, progress, want_play=True):
     if candidates and kodi.setting_bool('sync_bios'):
         try:
             bios.mirror(client, {'id': rom['platform_id'], 'slug': slug}, candidates, progress.bios)
-        except ApiError as e:
+        except (ApiError, OSError, ValueError) as e:
             kodi.log('BIOS mirror failed: {}'.format(e))
     cache.evict(keep_rom_id=rom['id'])
 
@@ -117,6 +119,9 @@ def resolve(handle, rom_id):
             _fail(handle, progress, str(e), kodi.L(30610))
         else:
             _fail(handle, progress, None)
+    except Exception as e:  # disk, archive or unexpected server data; never leave Kodi waiting
+        kodi.log(traceback.format_exc(), xbmc.LOGERROR)
+        _fail(handle, progress, str(e), kodi.L(30610))
 
 
 def download_only(rom_id):
@@ -128,10 +133,11 @@ def download_only(rom_id):
         prepare(rom, client, progress, want_play=False)
         progress.close()
         kodi.notify(kodi.L(30624), rom.get('name'))
-    except ApiError as e:
+    except Exception as e:
         if progress:
             progress.close()
         if str(e) != 'cancelled':
+            kodi.log(traceback.format_exc(), xbmc.LOGERROR)
             kodi.error(str(e), kodi.L(30610))
 
 

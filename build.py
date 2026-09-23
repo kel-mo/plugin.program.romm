@@ -2,6 +2,7 @@
 """Build a sideloadable zip of the add-on into dist/."""
 import os
 import re
+import subprocess
 import zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -15,18 +16,28 @@ def version():
         return re.search(r'<addon[^>]*\sversion="([^"]+)"', f.read()).group(1)
 
 
+def tracked_files():
+    """Ship only what git tracks; fall back to a directory walk outside a checkout."""
+    try:
+        out = subprocess.check_output(['git', 'ls-files', '-z'], cwd=HERE)
+        return [p for p in out.decode().split('\0') if p]
+    except (OSError, subprocess.CalledProcessError):
+        found = []
+        for base, dirs, files in os.walk(HERE):
+            dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
+            found += [os.path.relpath(os.path.join(base, n), HERE) for n in files if not n.endswith('.pyc')]
+        return found
+
+
 def main():
     out_dir = os.path.join(HERE, 'dist')
     os.makedirs(out_dir, exist_ok=True)
     out = os.path.join(out_dir, '{}-{}.zip'.format(ADDON_ID, version()))
     with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as z:
-        for base, dirs, files in os.walk(HERE):
-            dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
-            for name in files:
-                if name in EXCLUDE_FILES or name.endswith('.pyc'):
-                    continue
-                path = os.path.join(base, name)
-                z.write(path, os.path.join(ADDON_ID, os.path.relpath(path, HERE)))
+        for rel in tracked_files():
+            if os.path.basename(rel) in EXCLUDE_FILES:
+                continue
+            z.write(os.path.join(HERE, rel), os.path.join(ADDON_ID, rel))
     print(out)
 
 

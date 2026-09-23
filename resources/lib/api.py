@@ -11,6 +11,8 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urlencode
 from urllib.request import Request, urlopen
 
+import xbmc
+
 from . import kodi
 
 CLIENT = 'kodi'
@@ -66,7 +68,7 @@ class RommClient:
             h.update(extra)
         return h
 
-    def request(self, method, path, params=None, body=None, auth=True, raw=False, timeout=TIMEOUT):
+    def request(self, method, path, params=None, body=None, auth=True, timeout=TIMEOUT):
         if not self.base_url:
             raise ApiError(kodi.L(30601))
         url = self.url(path, **(params or {}))
@@ -90,13 +92,14 @@ class RommClient:
             raise ApiError('HTTP {} for {}: {}'.format(e.code, path, detail or e.reason), e.code, detail)
         except (URLError, socket.timeout, OSError) as e:
             raise ApiError('{}: {}'.format(kodi.L(30614), e))
-        if raw:
-            return resp
         payload = resp.read()
         resp.close()
         if not payload:
             return None
-        return json.loads(payload.decode('utf-8'))
+        try:
+            return json.loads(payload.decode('utf-8'))
+        except ValueError:
+            raise ApiError('{}: non-JSON response for {}'.format(kodi.L(30614), path))
 
     def get(self, path, **params):
         return self.request('GET', path, params=params)
@@ -143,7 +146,7 @@ class RommClient:
             detail = str(e.detail or '')
             if e.status == 400 and detail in ('authorization_pending', 'slow_down'):
                 return 'slow_down' if detail == 'slow_down' else 'pending'
-            if e.status in (400, 404, 410) and detail in ('access_denied', 'expired_token') or e.status in (404, 410):
+            if (e.status == 400 and detail in ('access_denied', 'expired_token')) or e.status in (404, 410):
                 return 'denied'
             raise
 
@@ -153,9 +156,6 @@ class RommClient:
     # ---------------------------------------------------------------- library
     def platforms(self):
         return self.get('/api/platforms') or []
-
-    def platform(self, platform_id):
-        return self.get('/api/platforms/{}'.format(int(platform_id)))
 
     def roms(self, offset=0, limit=100, **filters):
         params = dict(offset=offset, limit=limit, with_char_index='false',
@@ -179,9 +179,6 @@ class RommClient:
 
     def firmware(self, platform_id):
         return self.get('/api/firmware', platform_id=int(platform_id)) or []
-
-    def update_rom_user(self, rom_id, **props):
-        return self.request('PUT', '/api/roms/{}/props'.format(int(rom_id)), body=props)
 
     # --------------------------------------------------------------- content
     def rom_content_url(self, rom, file_ids=None):
@@ -211,14 +208,20 @@ class RommClient:
         kodi.ensure_dir(os.path.dirname(dest))
         part = dest + '.part'
         done = os.path.getsize(part) if os.path.exists(part) else 0
+        if expected_size and done > expected_size:       # stale partial from a changed file
+            os.remove(part)
+            done = 0
         extra = {'Range': 'bytes={}-'.format(done)} if done else {}
         req = Request(url, headers=self.headers(True, extra))
         try:
             resp = urlopen(req, timeout=TIMEOUT, context=self.ssl_ctx)
         except HTTPError as e:
-            if e.code == 416 and done:          # server says we already have it all
-                os.replace(part, dest)
+            if e.code == 416 and done and (not expected_size or done == expected_size):
+                os.replace(part, dest)          # server says we already have it all
                 return dest
+            if e.code == 416:
+                os.remove(part)
+                raise ApiError('stale partial download removed, retry', e.code)
             if e.code in (401, 403):
                 raise AuthError(kodi.L(30615), e.code)
             raise ApiError('HTTP {} downloading {}'.format(e.code, url), e.code)
@@ -232,6 +235,7 @@ class RommClient:
             total = int(length) + done
         mode = 'ab' if done else 'wb'
         last = 0
+        monitor = xbmc.Monitor()
         with open(part, mode) as f:
             while True:
                 chunk = resp.read(CHUNK)
@@ -240,9 +244,9 @@ class RommClient:
                 f.write(chunk)
                 done += len(chunk)
                 now = time.time()
-                if progress and now - last > 0.25:
+                if now - last > 0.25:
                     last = now
-                    if progress(done, total) is False:
+                    if monitor.abortRequested() or (progress and progress(done, total) is False):
                         resp.close()
                         raise ApiError('cancelled')
         resp.close()

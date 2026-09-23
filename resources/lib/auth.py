@@ -2,6 +2,7 @@
 """Pairing flows: RFC 8628 style device code, or an 8-digit client token code."""
 import time
 
+import xbmc
 import xbmcgui
 
 from . import kodi, pairdialog, qr
@@ -50,8 +51,9 @@ def _poll_loop(client, init, is_cancelled, on_tick):
     interval = max(int(init.get('interval') or 5), 2)
     expires_in = int(init.get('expires_in') or 600)
     deadline = time.time() + expires_in
+    monitor = xbmc.Monitor()
     while time.time() < deadline:
-        if is_cancelled():
+        if is_cancelled() or monitor.abortRequested():
             return None
         on_tick(deadline - time.time())
         result = client.device_auth_poll(init['device_code'])
@@ -62,9 +64,9 @@ def _poll_loop(client, init, is_cancelled, on_tick):
         elif isinstance(result, dict):
             return result
         for _ in range(interval * 4):
-            if is_cancelled():
+            # waitForAbort also pumps Kodi callbacks such as the dialog's onAction
+            if is_cancelled() or monitor.waitForAbort(0.25):
                 return None
-            time.sleep(0.25)
     return 'denied'
 
 

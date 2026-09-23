@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """plugin:// router and directory listings."""
 import json
+import traceback
 from urllib.parse import parse_qsl, urlencode
 
 import xbmc
@@ -99,7 +100,7 @@ def collections(client, smart=False):
     end()
 
 
-def rom_item(client, rom, installed):
+def rom_item(client, rom, installed, choices, cached_ids):
     name = rom.get('name') or rom.get('fs_name_no_tags') or rom.get('fs_name')
     li = xbmcgui.ListItem(name, offscreen=True)
     launch.fill_game_tag(li, rom)
@@ -112,7 +113,7 @@ def rom_item(client, rom, installed):
         art['fanart'] = client.asset_url(shots[0])
     if art:
         li.setArt(art)
-    cached = cache.is_cached(rom['id'])
+    cached = rom['id'] in cached_ids
     if cached:
         li.setLabel2(kodi.L(30624))
     li.setProperty('IsPlayable', 'true')
@@ -125,7 +126,7 @@ def rom_item(client, rom, installed):
         context.append((kodi.L(30015), run_plugin('download', rom_id=rom['id'])))
     else:
         context.append((kodi.L(30011), run_plugin('remove_cache', rom_id=rom['id'])))
-    if slug and cores.is_supported(slug, installed):
+    if slug and cores.is_supported(slug, installed, choices):
         context.append((kodi.L(30010), run_plugin('choose_core', slug=slug,
                                                   name=rom.get('platform_display_name') or slug)))
     li.addContextMenuItems(context)
@@ -141,13 +142,15 @@ def roms(client, params):
         filters['platform_ids'] = filters.pop('platform_id')
     items, total = client.roms(offset=offset, limit=limit, **filters)
     installed = cores.installed_clients()
+    choices = cores.user_choices()
+    cached_ids = cache.cached_ids()
     xbmcplugin.setContent(HANDLE, 'games')
     if params.get('name'):
         xbmcplugin.setPluginCategory(HANDLE, params['name'])
     for rom in items:
-        rom_item(client, rom, installed)
+        rom_item(client, rom, installed, choices, cached_ids)
     if offset + limit < (total or 0):
-        nxt = dict(params)
+        nxt = {k: v for k, v in params.items() if k != 'action'}
         nxt['offset'] = offset + limit
         folder('{} ({}/{})'.format(kodi.L(30006), min(offset + limit, total), total), 'roms', **nxt)
     if not items:
@@ -159,10 +162,10 @@ def roms(client, params):
 
 def search(client):
     term = xbmcgui.Dialog().input(kodi.L(30004))
-    if not term:
-        end(False)
-        return
-    roms(client, {'search_term': term, 'name': term})
+    end(False)
+    if term:
+        # the failed search node isn't in history, so Back from the results returns to root
+        xbmc.executebuiltin('Container.Update({})'.format(url_for('roms', search_term=term, name=term)))
 
 
 def random_game(client):
@@ -234,29 +237,37 @@ def run(argv):
     if action == 'download':
         return launch.download_only(params['rom_id'])
 
-    client = RommClient()
     try:
-        if action == 'platforms':
-            platforms(client)
-        elif action == 'collections':
-            collections(client)
-        elif action == 'smart_collections':
-            collections(client, smart=True)
-        elif action == 'roms':
-            roms(client, params)
-        elif action == 'search':
-            search(client)
-        elif action == 'random':
-            random_game(client)
-        elif action == 'details':
-            details(client, params['rom_id'])
-        else:
-            kodi.log('unknown action {}'.format(action), xbmc.LOGWARNING)
-            end(False)
+        dispatch(action, params)
     except AuthError as e:
         kodi.error(str(e))
         end(False)
     except ApiError as e:
         kodi.log('request failed: {}'.format(e), xbmc.LOGERROR)
         kodi.error(str(e))
+        end(False)
+    except Exception as e:  # keep Kodi from waiting on a listing that never ends
+        kodi.log(traceback.format_exc(), xbmc.LOGERROR)
+        kodi.error(str(e))
+        end(False)
+
+
+def dispatch(action, params):
+    client = RommClient()
+    if action == 'platforms':
+        platforms(client)
+    elif action == 'collections':
+        collections(client)
+    elif action == 'smart_collections':
+        collections(client, smart=True)
+    elif action == 'roms':
+        roms(client, params)
+    elif action == 'search':
+        search(client)
+    elif action == 'random':
+        random_game(client)
+    elif action == 'details':
+        details(client, params['rom_id'])
+    else:
+        kodi.log('unknown action {}'.format(action), xbmc.LOGWARNING)
         end(False)

@@ -13,7 +13,7 @@ LAUNCH_PRIORITY = ['m3u', 'cue', 'chd', 'gdi', 'pbp', 'ccd', 'toc', 'rvz', 'wbfs
                    'sfc', 'smc', 'nes', 'fds', 'z64', 'n64', 'v64', 'md', 'gen', 'smd', 'sms', 'gg', 'pce',
                    'sgx', 'ws', 'wsc', 'ngp', 'ngc', 'vb', 'lnx', 'a26', 'a52', 'a78', 'j64', 'jag', 'rom',
                    'col', 'int', 'vec', 'o2', 'dsk', 'adf', 'st', 'msa', 'd64', 't64', 'tap', 'prg', 'zip',
-                   '7z', 'conf', 'bat', 'com', 'wad', 'pak']
+                   '7z', 'conf', 'bat', 'com', 'pak']
 
 _table = None
 
@@ -71,18 +71,18 @@ def reset_user_choices():
     kodi.write_json(USER_FILE, {})
 
 
-def candidates(slug, installed=None):
+def candidates(slug, installed=None, choices=None):
     """Installed cores for a platform, best first. User choice wins."""
     installed = installed_clients() if installed is None else installed
     cores = [c for c in mapped_cores(slug) if c in installed]
-    choice = user_choices().get(canonical_slug(slug))
+    choice = (user_choices() if choices is None else choices).get(canonical_slug(slug))
     if choice and choice in installed:
         cores = [choice] + [c for c in cores if c != choice]
     return cores
 
 
-def is_supported(slug, installed=None):
-    return bool(candidates(slug, installed))
+def is_supported(slug, installed=None, choices=None):
+    return bool(candidates(slug, installed, choices))
 
 
 def core_label(core_id):

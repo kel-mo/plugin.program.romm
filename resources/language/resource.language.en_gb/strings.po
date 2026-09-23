@@ -290,10 +290,6 @@ msgctxt "#30619"
 msgid "Emulator choices reset"
 msgstr ""
 
-msgctxt "#30620"
-msgid "Extracting"
-msgstr ""
-
 msgctxt "#30621"
 msgid "Server version {0} is too old; RomM 5.0 or newer is required"
 msgstr ""
@@ -312,10 +308,6 @@ msgstr ""
 
 msgctxt "#30625"
 msgid "No games found"
-msgstr ""
-
-msgctxt "#30626"
-msgid "Pair from the RomM web interface: Settings > Client API tokens > Pair a device"
 msgstr ""
 
 msgctxt "#30627"
