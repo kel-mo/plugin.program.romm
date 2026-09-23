@@ -320,6 +320,18 @@ msgstr ""
 
 # Settings: sync 30700-30799
 
+msgctxt "#30700"
+msgid "Saves and activity"
+msgstr ""
+
+msgctxt "#30710"
+msgid "Report play time to RomM"
+msgstr ""
+
+msgctxt "#30711"
+msgid "Shows this Kodi as playing in RomM and records play sessions and last played."
+msgstr ""
+
 msgctxt "#30724"
 msgid "Registered with RomM as {0}"
 msgstr ""

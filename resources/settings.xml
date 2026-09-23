@@ -121,6 +121,15 @@
         </setting>
       </group>
     </category>
+    <category id="sync" label="30700" help="">
+      <group id="1">
+        <setting id="report_play" type="boolean" label="30710" help="30711">
+          <level>0</level>
+          <default>true</default>
+          <control type="toggle"/>
+        </setting>
+      </group>
+    </category>
     <category id="cache" label="30400" help="">
       <group id="1">
         <setting id="cache_path" type="path" label="30401" help="30402">

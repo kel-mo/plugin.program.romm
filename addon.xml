@@ -7,6 +7,7 @@
   <extension point="xbmc.python.pluginsource" library="default.py">
     <provides>game</provides>
   </extension>
+  <extension point="xbmc.service" library="service.py"/>
   <extension point="xbmc.addon.metadata">
     <summary lang="en_GB">Play your RomM library with Kodi's built-in emulators</summary>
     <description lang="en_GB">Browse the ROM library of a self-hosted RomM server, download games and BIOS files on demand, and play them in Kodi's RetroPlayer using the installed libretro game add-ons.</description>
