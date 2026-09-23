@@ -47,6 +47,20 @@ def is_cached(rom_id):
     return os.path.exists(marker_path(rom_id))
 
 
+def rom_id_for_path(path):
+    """Map a file inside the cache (e.g. the path RetroPlayer is playing) back to its ROM id."""
+    try:
+        rel = os.path.relpath(os.path.realpath(path), os.path.realpath(root()))
+    except (ValueError, OSError):
+        return None
+    head = rel.split(os.sep, 1)[0]
+    return int(head) if head.isdigit() else None
+
+
+def marker(rom_id):
+    return kodi.read_json(marker_path(rom_id))
+
+
 def cached_ids():
     base = root()
     return set(int(n) for n in os.listdir(base) if n.isdigit() and os.path.exists(os.path.join(base, n, MARKER)))

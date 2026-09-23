@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """Minimal RomM REST client built on urllib (no external dependencies)."""
+import hashlib
 import json
+import mimetypes
 import os
 import platform as _platform
 import socket
@@ -68,13 +70,18 @@ class RommClient:
             h.update(extra)
         return h
 
-    def request(self, method, path, params=None, body=None, auth=True, timeout=TIMEOUT, raw=False):
+    def request(self, method, path, params=None, body=None, auth=True, timeout=TIMEOUT, raw=False,
+                files=None):
+        """files: {field: (filename, bytes)} sends multipart/form-data instead of JSON."""
         if not self.base_url:
             raise ApiError(kodi.L(30601))
         url = self.url(path, **(params or {}))
         data = None
         extra = {}
-        if body is not None:
+        if files:
+            data, ctype = _multipart(files)
+            extra['Content-Type'] = ctype
+        elif body is not None:
             data = json.dumps(body).encode('utf-8')
             extra['Content-Type'] = 'application/json'
         req = Request(url, data=data, headers=self.headers(auth, extra), method=method)
@@ -105,6 +112,12 @@ class RommClient:
 
     def get(self, path, **params):
         return self.request('GET', path, params=params)
+
+    def delete(self, path, **params):
+        return self.request('DELETE', path, params=params)
+
+    def put(self, path, body=None, **params):
+        return self.request('PUT', path, params=params, body=body if body is not None else {})
 
     def post(self, path, body=None, auth=True, **params):
         return self.request('POST', path, params=params, body=body if body is not None else {}, auth=auth)
@@ -182,6 +195,73 @@ class RommClient:
     def firmware(self, platform_id):
         return self.get('/api/firmware', platform_id=int(platform_id)) or []
 
+    # --------------------------------------------------------------- devices
+    def device_payload(self):
+        return {'name': self.device_name(), 'platform': _platform.system().lower() or 'linux',
+                'client': CLIENT, 'client_version': kodi.ADDON_VERSION,
+                'hostname': socket.gethostname() or None, 'sync_mode': 'api'}
+
+    def register_device(self):
+        """POST /api/devices; returns the device_id (existing device reused by fingerprint)."""
+        payload = dict(self.device_payload(), allow_existing=True)
+        return self.post('/api/devices', payload)['device_id']
+
+    def update_device(self, device_id):
+        return self.put('/api/devices/{}'.format(device_id), self.device_payload())
+
+    def heartbeat_playing(self, rom_id, device_id):
+        """Tell RomM this device is playing rom_id; server TTL is ~90 s, call every ~30 s."""
+        return self.post('/api/activity/heartbeat', {'rom_id': int(rom_id), 'device_id': device_id})
+
+    def heartbeat_clear(self, device_id):
+        return self.delete('/api/activity/heartbeat', device_id=device_id)
+
+    def ingest_play_sessions(self, device_id, sessions):
+        """sessions: [{rom_id, save_slot, start_time (ISO 8601 UTC), end_time, duration_ms}], max 100."""
+        return self.post('/api/play-sessions', {'device_id': device_id, 'sessions': sessions})
+
+    # ------------------------------------------------------------ save sync
+    def negotiate_sync(self, device_id, saves, rom_ids=None):
+        """saves: [{rom_id, file_name, slot, emulator, content_hash, updated_at, file_size_bytes}]."""
+        body = {'device_id': device_id, 'saves': saves}
+        if rom_ids:
+            body['rom_ids'] = [int(r) for r in rom_ids]
+        return self.post('/api/sync/negotiate', body)
+
+    def complete_sync(self, session_id, completed=0, failed=0, play_sessions=None):
+        body = {'operations_completed': completed, 'operations_failed': failed}
+        if play_sessions:
+            body['play_sessions'] = play_sessions
+        return self.post('/api/sync/sessions/{}/complete'.format(int(session_id)), body)
+
+    def saves(self, rom_id=None, rom_ids=None, device_id=None, slot=None):
+        return self.get('/api/saves', rom_id=rom_id, rom_ids=rom_ids, device_id=device_id, slot=slot) or []
+
+    def upload_save(self, rom_id, file_name, data, slot=None, emulator=None, device_id=None, session_id=None,
+                    overwrite=False, autocleanup=False):
+        """overwrite replaces a newer server copy instead of a 409; autocleanup trims old slot versions."""
+        return self.request('POST', '/api/saves',
+                            params=dict(rom_id=int(rom_id), slot=slot, emulator=emulator,
+                                        device_id=device_id, session_id=session_id,
+                                        overwrite='true' if overwrite else None,
+                                        autocleanup='true' if autocleanup else None),
+                            files={'saveFile': (file_name, data)})
+
+    def update_save(self, save_id, file_name, data, device_id=None):
+        return self.request('PUT', '/api/saves/{}'.format(int(save_id)), params=dict(device_id=device_id),
+                            files={'saveFile': (file_name, data)})
+
+    def download_save(self, save_id, device_id=None, session_id=None):
+        """Returns the save bytes."""
+        resp = self.request('GET', '/api/saves/{}/content'.format(int(save_id)),
+                            params=dict(device_id=device_id, session_id=session_id), raw=True)
+        data = resp.read()
+        resp.close()
+        return data
+
+    def confirm_save_downloaded(self, save_id, device_id):
+        return self.post('/api/saves/{}/downloaded'.format(int(save_id)), {'device_id': device_id})
+
     # --------------------------------------------------------------- content
     def rom_content_url(self, rom, file_ids=None):
         name = rom.get('fs_name') or str(rom['id'])
@@ -254,3 +334,24 @@ class RommClient:
         resp.close()
         os.replace(part, dest)
         return dest
+
+
+def md5_file(path):
+    h = hashlib.md5()
+    with open(path, 'rb') as f:
+        for chunk in iter(lambda: f.read(CHUNK), b''):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _multipart(files):
+    boundary = '----romm-kodi-' + uuid.uuid4().hex
+    body = bytearray()
+    for field, (filename, data) in files.items():
+        ctype = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
+        body += ('--{}\r\nContent-Disposition: form-data; name="{}"; filename="{}"\r\n'
+                 'Content-Type: {}\r\n\r\n'.format(boundary, field, filename, ctype)).encode('utf-8')
+        body += data
+        body += b'\r\n'
+    body += '--{}--\r\n'.format(boundary).encode('utf-8')
+    return bytes(body), 'multipart/form-data; boundary=' + boundary
