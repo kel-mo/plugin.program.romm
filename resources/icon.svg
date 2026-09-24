@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1f2a36"/>
+      <stop offset="1" stop-color="#121820"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <g fill="none" stroke-linejoin="round">
+    <!-- cord: hang, stem, 270 degree top loop, bowl, loop, leg -->
+    <path stroke="#eaf6fb" stroke-width="10" stroke-linecap="round"
+          d="M256 324 C256 292 166 314 166 282 C166 262 196 276 196 252
+             L196 96 A18 18 0 1 0 178 114
+             C240 112 302 100 304 152 C306 198 272 214 250 214
+             A16 16 0 1 1 266 198
+             C268 228 300 250 336 264"/>
+    <!-- top strands at the crossings: same curves, dashed to the crossing only -->
+    <path stroke="#1c2530" stroke-width="24" stroke-dasharray="0 6 26 2000"
+          d="M178 114 C240 112 302 100 304 152"/>
+    <path stroke="#eaf6fb" stroke-width="10" stroke-dasharray="0 2 34 2000"
+          d="M178 114 C240 112 302 100 304 152"/>
+    <path stroke="#1a222c" stroke-width="24" stroke-dasharray="0 4 26 2000"
+          d="M266 198 C268 228 300 250 336 264"/>
+    <path stroke="#eaf6fb" stroke-width="10" stroke-dasharray="0 1 34 2000"
+          d="M266 198 C268 228 300 250 336 264"/>
+  </g>
+  <!-- plug terminating the wire, aligned with the leg's end tangent -->
+  <g transform="translate(336,264) rotate(21) scale(1.4)">
+    <path d="M-2 -5 L8 -7 V7 L-2 5 Z" fill="#eaf6fb"/>
+    <rect x="7" y="-9" width="28" height="18" rx="4" fill="#eaf6fb"/>
+    <rect x="34" y="-4.5" width="12" height="9" rx="2" fill="#1293c9"/>
+  </g>
+  <!-- gamepad -->
+  <g transform="translate(38.4,190) scale(0.85)">
+    <path d="M178 158 H334 C370 158 390 180 395 214 L404 282 C408 312 382 330 358 314 L324 290 H188 L154 314 C130 330 104 312 108 282 L117 214 C122 180 142 158 178 158 Z"
+          fill="#eaf6fb"/>
+    <g fill="#1f2a36">
+      <rect x="156" y="208" width="66" height="22" rx="4"/>
+      <rect x="178" y="186" width="22" height="66" rx="4"/>
+    </g>
+    <g fill="#1293c9">
+      <circle cx="330" cy="192" r="12"/>
+      <circle cx="304" cy="219" r="12"/>
+      <circle cx="356" cy="219" r="12"/>
+      <circle cx="330" cy="246" r="12"/>
+    </g>
+  </g>
+</svg>

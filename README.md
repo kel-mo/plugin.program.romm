@@ -92,3 +92,5 @@ Add-ons paired before 0.2.0 lack the permission to change favourites; choose
 ## License
 
 GPL-2.0-or-later.
+
+This add-on is not affiliated with the RomM project.

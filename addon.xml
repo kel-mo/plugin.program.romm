@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.program.romm" name="RomM" version="0.2.0" provider-name="kel-mo">
+<addon id="plugin.program.romm" name="RomM" version="0.2.1" provider-name="kel-mo">
   <requires>
     <import addon="xbmc.python" version="3.0.1"/>
     <import addon="script.module.pyqrcode" version="1.2.1"/>
@@ -11,12 +11,14 @@
   <extension point="xbmc.addon.metadata">
     <summary lang="en_GB">Play your RomM library with Kodi's built-in emulators</summary>
     <description lang="en_GB">Browse the ROM library of a self-hosted RomM server, download games and BIOS files on demand, and play them in Kodi's RetroPlayer using the installed libretro game add-ons.</description>
-    <disclaimer lang="en_GB">Requires a RomM server (5.0 or newer) that you own or have an account on.</disclaimer>
+    <disclaimer lang="en_GB">Requires a RomM server (5.0 or newer) that you own or have an account on. Not affiliated with the RomM project.</disclaimer>
     <platform>all</platform>
     <license>GPL-2.0-or-later</license>
     <source>https://github.com/kel-mo/plugin.program.romm</source>
     <website>https://romm.app</website>
-    <news>v0.2.0
+    <news>v0.2.1
+- New add-on icon
+v0.2.0
 - Continue playing, backlog, and browsing by genre, region and play status
 - Favourite, backlog, play status and hide games from the context menu (pair again to allow favourites)
 - Sort order setting, screenshots, other versions of a game, richer game details
