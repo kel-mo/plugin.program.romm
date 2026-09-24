@@ -97,6 +97,10 @@
     "mode": "core",
     "multi": true
   },
+  "game.libretro.lrps2": {
+    "mode": "core",
+    "multi": true
+  },
   "game.libretro.melonds": {
     "ext": "sav",
     "mode": "core"

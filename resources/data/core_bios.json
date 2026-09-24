@@ -207,6 +207,12 @@
       "tos.img"
     ]
   },
+  "game.libretro.lrps2": {
+    "_source": "lrps2:libretro/main.cpp",
+    "optional": [],
+    "required": [],
+    "subdir": "pcsx2/bios/"
+  },
   "game.libretro.melonds": {
     "_source": "grout:melonds_libretro",
     "optional": [

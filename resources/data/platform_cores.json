@@ -704,6 +704,23 @@
         "min"
       ]
     },
+    "ps2": {
+      "name": "Sony PlayStation 2",
+      "cores": [
+        "game.libretro.lrps2"
+      ],
+      "extensions": [
+        "chd",
+        "ciso",
+        "cso",
+        "cue",
+        "elf",
+        "gz",
+        "iso",
+        "m3u",
+        "zso"
+      ]
+    },
     "psx": {
       "name": "Sony PlayStation",
       "cores": [
@@ -1082,6 +1099,8 @@
     "pcfx": "pc-fx",
     "playstation": "psx",
     "playstation-1": "psx",
+    "playstation-2": "ps2",
+    "playstation2": "ps2",
     "pokemini": "pokemon-mini",
     "prboom": "doom",
     "ps": "psx",
