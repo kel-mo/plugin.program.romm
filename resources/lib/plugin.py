@@ -144,6 +144,8 @@ def rom_item(client, rom, installed, choices, cached_ids, favourite_ids=None, so
     context = [(kodi.L(30012), run_plugin('details', rom_id=rom['id']))]
     if shots:
         context.append((kodi.L(30034), 'SlideShow({})'.format(url_for('screenshots', rom_id=rom['id']))))
+    if rom.get('sibling_roms'):
+        context.append((kodi.L(30035, len(rom['sibling_roms'])), run_plugin('versions', rom_id=rom['id'])))
     if not cached:
         context.append((kodi.L(30015), run_plugin('download', rom_id=rom['id'])))
     else:
@@ -234,6 +236,14 @@ def details(client, rom_id):
     if rom.get('summary'):
         lines += ['', rom['summary']]
     xbmcgui.Dialog().textviewer(kodi.L(30012), '\n'.join(lines))
+
+
+def versions(client, rom_id):
+    siblings = client.rom(rom_id).get('sibling_roms') or []
+    pick = xbmcgui.Dialog().select(kodi.L(30035, len(siblings)),
+                                   [s.get('fs_name_no_ext') or s.get('name') or str(s['id']) for s in siblings])
+    if pick >= 0:
+        xbmc.executebuiltin('PlayMedia({})'.format(url_for('play', rom_id=siblings[pick]['id'])))
 
 
 def screenshots(client, rom_id):
@@ -347,6 +357,8 @@ def dispatch(action, params):
         details(client, params['rom_id'])
     elif action == 'screenshots':
         screenshots(client, params['rom_id'])
+    elif action == 'versions':
+        versions(client, params['rom_id'])
     elif action == 'sync_now':
         sync_now(client)
     elif action == 'favourite':

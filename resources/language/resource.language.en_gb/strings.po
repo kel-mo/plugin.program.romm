@@ -158,6 +158,10 @@ msgctxt "#30034"
 msgid "Screenshots"
 msgstr ""
 
+msgctxt "#30035"
+msgid "Other versions ({0})"
+msgstr ""
+
 # Settings: server 30100-30199
 
 msgctxt "#30100"
