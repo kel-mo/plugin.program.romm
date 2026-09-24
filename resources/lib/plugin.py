@@ -13,6 +13,8 @@ from .api import ApiError, AuthError, RommClient
 
 BASE = 'plugin://{}/'.format(kodi.ADDON_ID)
 HANDLE = -1
+SORTS = [('name', 30305), ('first_release_date', 30306), ('average_rating', 30307),
+         ('created_at', 30308), ('last_played', 30309)]
 
 
 def url_for(action, **params):
@@ -54,7 +56,7 @@ def root():
     folder(kodi.L(30000), 'platforms', kodi.ICON)
     folder(kodi.L(30001), 'collections', kodi.ICON)
     folder(kodi.L(30009), 'smart_collections', kodi.ICON)
-    folder(kodi.L(30002), 'roms', kodi.ICON, last_played='true')
+    folder(kodi.L(30002), 'roms', kodi.ICON, last_played='true', order_by='last_played')
     folder(kodi.L(30003), 'roms', kodi.ICON, favorite='true')
     folder(kodi.L(30004), 'search', kodi.ICON)
     li = xbmcgui.ListItem(kodi.L(30008), offscreen=True)
@@ -100,7 +102,7 @@ def collections(client, smart=False):
     end()
 
 
-def rom_item(client, rom, installed, choices, cached_ids):
+def rom_item(client, rom, installed, choices, cached_ids, sortable=True):
     name = rom.get('name') or rom.get('fs_name_no_tags') or rom.get('fs_name')
     li = xbmcgui.ListItem(name, offscreen=True)
     launch.fill_game_tag(li, rom)
@@ -129,6 +131,8 @@ def rom_item(client, rom, installed, choices, cached_ids):
     if slug and cores.is_supported(slug, installed, choices):
         context.append((kodi.L(30010), run_plugin('choose_core', slug=slug,
                                                   name=rom.get('platform_display_name') or slug)))
+    if sortable:
+        context.append((kodi.L(30016), run_plugin('sort_by')))
     li.addContextMenuItems(context)
     xbmcplugin.addDirectoryItem(HANDLE, url_for('play', rom_id=rom['id']), li, isFolder=False)
 
@@ -140,6 +144,8 @@ def roms(client, params):
                                       'search_term', 'favorite', 'last_played') if params.get(k)}
     if 'platform_id' in filters:
         filters['platform_ids'] = filters.pop('platform_id')
+    filters['order_by'] = params.get('order_by') or kodi.setting('sort_by') or 'name'
+    filters['order_dir'] = 'asc' if filters['order_by'] == 'name' else 'desc'
     items, total = client.roms(offset=offset, limit=limit, **filters)
     installed = cores.installed_clients()
     choices = cores.user_choices()
@@ -148,7 +154,7 @@ def roms(client, params):
     if params.get('name'):
         xbmcplugin.setPluginCategory(HANDLE, params['name'])
     for rom in items:
-        rom_item(client, rom, installed, choices, cached_ids)
+        rom_item(client, rom, installed, choices, cached_ids, not params.get('order_by'))
     if offset + limit < (total or 0):
         nxt = {k: v for k, v in params.items() if k != 'action'}
         nxt['offset'] = offset + limit
@@ -158,6 +164,16 @@ def roms(client, params):
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_NONE)
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     end()
+
+
+def choose_sort():
+    keys = [k for k, _ in SORTS]
+    current = kodi.setting('sort_by') or 'name'
+    pick = xbmcgui.Dialog().select(kodi.L(30304), [kodi.L(label) for _, label in SORTS],
+                                   preselect=keys.index(current) if current in keys else 0)
+    if pick >= 0:
+        kodi.set_setting('sort_by', keys[pick])
+        xbmc.executebuiltin('Container.Refresh')
 
 
 def search(client):
@@ -230,6 +246,8 @@ def run(argv):
     if action == 'choose_core':
         cores.choose_for_platform(params.get('slug'), params.get('name'))
         return xbmc.executebuiltin('Container.Refresh')
+    if action == 'sort_by':
+        return choose_sort()
     if action == 'reset_cores':
         cores.reset_user_choices()
         return kodi.notify(kodi.L(30619))

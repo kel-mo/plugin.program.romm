@@ -27,7 +27,7 @@ msgid "Collections"
 msgstr ""
 
 msgctxt "#30002"
-msgid "Recently played"
+msgid "Continue playing"
 msgstr ""
 
 msgctxt "#30003"
@@ -80,6 +80,10 @@ msgstr ""
 
 msgctxt "#30015"
 msgid "Download only"
+msgstr ""
+
+msgctxt "#30016"
+msgid "Sort by"
 msgstr ""
 
 # Settings: server 30100-30199
@@ -166,6 +170,30 @@ msgstr ""
 
 msgctxt "#30303"
 msgid "Only list platforms that Kodi can play with its installed game add-ons."
+msgstr ""
+
+msgctxt "#30304"
+msgid "Sort games by"
+msgstr ""
+
+msgctxt "#30305"
+msgid "Name"
+msgstr ""
+
+msgctxt "#30306"
+msgid "Release date (newest first)"
+msgstr ""
+
+msgctxt "#30307"
+msgid "Rating (highest first)"
+msgstr ""
+
+msgctxt "#30308"
+msgid "Recently added"
+msgstr ""
+
+msgctxt "#30309"
+msgid "Last played"
 msgstr ""
 
 # Settings: cache 30400-30499

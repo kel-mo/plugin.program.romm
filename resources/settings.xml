@@ -119,6 +119,22 @@
           <default>false</default>
           <control type="toggle"/>
         </setting>
+        <setting id="sort_by" type="string" label="30304" help="">
+          <level>0</level>
+          <default>name</default>
+          <constraints>
+            <options>
+              <option label="30305">name</option>
+              <option label="30306">first_release_date</option>
+              <option label="30307">average_rating</option>
+              <option label="30308">created_at</option>
+              <option label="30309">last_played</option>
+            </options>
+          </constraints>
+          <control type="list" format="string">
+            <heading>30304</heading>
+          </control>
+        </setting>
       </group>
     </category>
     <category id="sync" label="30700" help="">
