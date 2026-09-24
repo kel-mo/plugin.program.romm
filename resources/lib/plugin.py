@@ -98,7 +98,9 @@ def collections(client, smart=False):
             count = len(c['rom_ids'])
         if count is not None:
             label = '{} ({})'.format(label, count)
-        icon = client.asset_url(c.get('path_cover_large') or c.get('path_cover_small') or c.get('url_cover'))
+        covers = c.get('path_covers_large') or c.get('path_covers_small') or []
+        icon = client.asset_url(c.get('path_cover_large') or c.get('path_cover_small') or c.get('url_cover')
+                                or (covers[0] if covers else None))
         key = 'smart_collection_id' if smart else 'collection_id'
         folder(label, 'roms', icon, **{key: c['id'], 'name': c.get('name')})
     end()
