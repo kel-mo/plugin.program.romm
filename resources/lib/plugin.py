@@ -59,6 +59,7 @@ def root():
     folder(kodi.L(30002), 'roms', kodi.ICON, last_played='true', order_by='last_played')
     folder(kodi.L(30003), 'roms', kodi.ICON, favorite='true')
     folder(kodi.L(30023), 'roms', kodi.ICON, statuses='backlogged')
+    folder(kodi.L(30030), 'browse', kodi.ICON)
     folder(kodi.L(30004), 'search', kodi.ICON)
     li = xbmcgui.ListItem(kodi.L(30008), offscreen=True)
     li.setArt({'icon': kodi.ICON})
@@ -103,6 +104,19 @@ def collections(client, smart=False):
     end()
 
 
+def browse(client, kind=None):
+    if not kind:
+        for key, label in (('genres', 30031), ('regions', 30032), ('statuses', 30033)):
+            folder(kodi.L(label), 'browse', kodi.ICON, kind=key)
+    elif kind == 'statuses':
+        for key, label in props.STATUSES[1:]:
+            folder(kodi.L(label), 'roms', kodi.ICON, statuses=key, name=kodi.L(label))
+    else:
+        for value in sorted(client.rom_filters().get(kind) or [], key=str.lower):
+            folder(value, 'roms', kodi.ICON, name=value, **{kind: value})
+    end()
+
+
 def rom_item(client, rom, installed, choices, cached_ids, favourite_ids=None, sortable=True):
     name = rom.get('name') or rom.get('fs_name_no_tags') or rom.get('fs_name')
     li = xbmcgui.ListItem(name, offscreen=True)
@@ -143,7 +157,8 @@ def roms(client, params):
     offset = int(params.get('offset') or 0)
     limit = kodi.setting_int('page_size') or 100
     filters = {k: params[k] for k in ('platform_id', 'collection_id', 'smart_collection_id',
-                                      'search_term', 'favorite', 'last_played', 'statuses') if params.get(k)}
+                                      'search_term', 'favorite', 'last_played', 'statuses', 'genres',
+                                      'regions') if params.get(k)}
     if 'platform_id' in filters:
         filters['platform_ids'] = filters.pop('platform_id')
     filters['order_by'] = params.get('order_by') or kodi.setting('sort_by') or 'name'
@@ -300,6 +315,8 @@ def dispatch(action, params):
         collections(client, smart=True)
     elif action == 'roms':
         roms(client, params)
+    elif action == 'browse':
+        browse(client, params.get('kind'))
     elif action == 'search':
         search(client)
     elif action == 'random':

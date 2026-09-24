@@ -138,6 +138,22 @@ msgctxt "#30029"
 msgid "Never playing"
 msgstr ""
 
+msgctxt "#30030"
+msgid "Browse by"
+msgstr ""
+
+msgctxt "#30031"
+msgid "Genre"
+msgstr ""
+
+msgctxt "#30032"
+msgid "Region"
+msgstr ""
+
+msgctxt "#30033"
+msgid "Play status"
+msgstr ""
+
 # Settings: server 30100-30199
 
 msgctxt "#30100"

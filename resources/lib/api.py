@@ -223,6 +223,9 @@ class RommClient:
     def remove_from_collection(self, collection_id, rom_ids):
         return self.delete('/api/collections/{}/roms'.format(int(collection_id)), {'rom_ids': list(rom_ids)})
 
+    def rom_filters(self):
+        return self.get('/api/roms/filters') or {}
+
     def update_rom_props(self, rom_id, **props):
         """props: RomUserData fields (status, backlogged, hidden, now_playing, rating, ...)."""
         return self.put('/api/roms/{}/props'.format(int(rom_id)), props)
