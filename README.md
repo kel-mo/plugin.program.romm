@@ -4,12 +4,10 @@
 
 Play the library of your self-hosted [RomM](https://romm.app) server on Kodi.
 Browse your games, and Kodi downloads each one (with its BIOS files) when you
-play it, using its built-in RetroPlayer and `game.libretro.*` emulators. Saves
-and play time sync back to RomM.
+play it, using its built-in RetroPlayer emulators. Saves and play time sync
+back to RomM.
 
-Needs RomM 5.0 or newer, and Kodi 22 with the RetroPlayer fix from
-[xbmc#29393](https://github.com/xbmc/xbmc/pull/29393). Without that fix Kodi
-says the game is not compatible with any emulator.
+Needs RomM 5.0 or newer, and Kodi 22.
 
 ## Install
 
