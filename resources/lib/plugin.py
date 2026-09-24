@@ -178,8 +178,9 @@ def details(client, rom_id):
     rom = client.rom(rom_id)
     lines = [rom.get('name') or '', rom.get('platform_display_name') or rom.get('platform_slug') or '', '']
     meta = rom.get('metadatum') or {}
-    if meta.get('first_release_date'):
-        lines.append(str(meta['first_release_date'])[:10])
+    released = launch.release_date(rom)
+    if released:
+        lines.append(released.isoformat())
     if meta.get('genres'):
         lines.append(', '.join(map(str, meta['genres'])))
     if rom.get('regions'):

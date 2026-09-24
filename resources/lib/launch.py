@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Prepare a ROM locally and hand it to RetroPlayer."""
+import datetime
 import os
 import traceback
 
@@ -18,6 +19,17 @@ def _human(n):
             return '{:.0f} {}'.format(n, unit) if unit == 'B' else '{:.1f} {}'.format(n, unit)
         n /= 1024
     return '{:.1f} TB'.format(n)
+
+
+def release_date(rom):
+    """RomM metadatum first_release_date is epoch milliseconds."""
+    ms = (rom.get('metadatum') or {}).get('first_release_date')
+    if not ms:
+        return None
+    try:
+        return datetime.datetime.fromtimestamp(int(ms) / 1000, datetime.timezone.utc).date()
+    except (TypeError, ValueError, OverflowError, OSError):
+        return None
 
 
 class Progress:
@@ -56,9 +68,9 @@ def fill_game_tag(li, rom, platform_name=None, game_client=None):
         tag.setDeveloper(', '.join(str(c) for c in meta['companies'][:3]))
     if rom.get('summary'):
         tag.setOverview(rom['summary'])
-    year = str(meta.get('first_release_date') or '')[:4]
-    if year.isdigit():
-        tag.setYear(int(year))
+    released = release_date(rom)
+    if released:
+        tag.setYear(released.year)
     if game_client:
         tag.setGameClient(game_client)
     return tag
