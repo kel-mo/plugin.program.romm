@@ -35,7 +35,7 @@ def main():
     out = os.path.join(out_dir, '{}-{}.zip'.format(ADDON_ID, version()))
     with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as z:
         for rel in tracked_files():
-            if os.path.basename(rel) in EXCLUDE_FILES:
+            if os.path.basename(rel) in EXCLUDE_FILES or EXCLUDE_DIRS.intersection(rel.split('/')[:-1]):
                 continue
             z.write(os.path.join(HERE, rel), os.path.join(ADDON_ID, rel))
     print(out)
