@@ -24,7 +24,7 @@ TIMEOUT = 30
 
 # scopes we ask for during pairing; assets/devices are for save sync later
 SCOPES = ['me.read', 'platforms.read', 'roms.read', 'roms.user.read', 'roms.user.write',
-          'collections.read', 'firmware.read', 'assets.read', 'assets.write',
+          'collections.read', 'collections.write', 'firmware.read', 'assets.read', 'assets.write',
           'devices.read', 'devices.write']
 
 
@@ -127,8 +127,8 @@ class RommClient:
     def get(self, path, **params):
         return self.request('GET', path, params=params)
 
-    def delete(self, path, **params):
-        return self.request('DELETE', path, params=params)
+    def delete(self, path, body=None, **params):
+        return self.request('DELETE', path, params=params, body=body)
 
     def put(self, path, body=None, **params):
         return self.request('PUT', path, params=params, body=body if body is not None else {})
@@ -205,6 +205,27 @@ class RommClient:
 
     def smart_collections(self):
         return self.get('/api/collections/smart') or []
+
+    def favourites(self, create=False):
+        """The user's favourites collection; RomM's web UI creates it lazily as "Favorites"."""
+        user = kodi.setting('username')
+        for c in self.collections():             # other users' public collections are listed too
+            if c.get('is_favorite') and (c.get('owner_username') == user if user else not c.get('is_public')):
+                return c
+        if create:
+            return self.request('POST', '/api/collections', params=dict(is_favorite='true'),
+                                files={'name': (None, b'Favorites')})
+        return None
+
+    def add_to_collection(self, collection_id, rom_ids):
+        return self.post('/api/collections/{}/roms'.format(int(collection_id)), {'rom_ids': list(rom_ids)})
+
+    def remove_from_collection(self, collection_id, rom_ids):
+        return self.delete('/api/collections/{}/roms'.format(int(collection_id)), {'rom_ids': list(rom_ids)})
+
+    def update_rom_props(self, rom_id, **props):
+        """props: RomUserData fields (status, backlogged, hidden, now_playing, rating, ...)."""
+        return self.put('/api/roms/{}/props'.format(int(rom_id)), props)
 
     def firmware(self, platform_id):
         return self.get('/api/firmware', platform_id=int(platform_id)) or []
@@ -363,6 +384,11 @@ def _multipart(files):
     boundary = '----romm-kodi-' + uuid.uuid4().hex
     body = bytearray()
     for field, (filename, data) in files.items():
+        if filename is None:                     # plain form field
+            body += ('--{}\r\nContent-Disposition: form-data; name="{}"\r\n\r\n'
+                     .format(boundary, field)).encode('utf-8')
+            body += data + b'\r\n'
+            continue
         ctype = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
         body += ('--{}\r\nContent-Disposition: form-data; name="{}"; filename="{}"\r\n'
                  'Content-Type: {}\r\n\r\n'.format(boundary, field, filename, ctype)).encode('utf-8')

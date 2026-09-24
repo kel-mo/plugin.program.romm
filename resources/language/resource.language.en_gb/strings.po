@@ -86,6 +86,58 @@ msgctxt "#30016"
 msgid "Sort by"
 msgstr ""
 
+msgctxt "#30017"
+msgid "Add to favourites"
+msgstr ""
+
+msgctxt "#30018"
+msgid "Remove from favourites"
+msgstr ""
+
+msgctxt "#30019"
+msgid "Add to backlog"
+msgstr ""
+
+msgctxt "#30020"
+msgid "Remove from backlog"
+msgstr ""
+
+msgctxt "#30021"
+msgid "Set play status"
+msgstr ""
+
+msgctxt "#30022"
+msgid "Hide game"
+msgstr ""
+
+msgctxt "#30023"
+msgid "Backlog"
+msgstr ""
+
+msgctxt "#30024"
+msgid "Not set"
+msgstr ""
+
+msgctxt "#30025"
+msgid "Incomplete"
+msgstr ""
+
+msgctxt "#30026"
+msgid "Finished"
+msgstr ""
+
+msgctxt "#30027"
+msgid "Completed 100%"
+msgstr ""
+
+msgctxt "#30028"
+msgid "Retired"
+msgstr ""
+
+msgctxt "#30029"
+msgid "Never playing"
+msgstr ""
+
 # Settings: server 30100-30199
 
 msgctxt "#30100"
@@ -344,6 +396,26 @@ msgstr ""
 
 msgctxt "#30628"
 msgid "Press Back to cancel"
+msgstr ""
+
+msgctxt "#30629"
+msgid "Added to favourites"
+msgstr ""
+
+msgctxt "#30630"
+msgid "Removed from favourites"
+msgstr ""
+
+msgctxt "#30631"
+msgid "RomM refused the change. Pair again to give the add-on the new permissions."
+msgstr ""
+
+msgctxt "#30632"
+msgid "Hide {0} from the library? It can be shown again from the RomM web interface."
+msgstr ""
+
+msgctxt "#30633"
+msgid "Updated in RomM"
 msgstr ""
 
 # Settings: sync 30700-30799

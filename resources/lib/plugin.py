@@ -8,7 +8,7 @@ import xbmc
 import xbmcgui
 import xbmcplugin
 
-from . import auth, cache, cores, device, icons, kodi, launch
+from . import auth, cache, cores, device, icons, kodi, launch, props
 from .api import ApiError, AuthError, RommClient
 
 BASE = 'plugin://{}/'.format(kodi.ADDON_ID)
@@ -58,6 +58,7 @@ def root():
     folder(kodi.L(30009), 'smart_collections', kodi.ICON)
     folder(kodi.L(30002), 'roms', kodi.ICON, last_played='true', order_by='last_played')
     folder(kodi.L(30003), 'roms', kodi.ICON, favorite='true')
+    folder(kodi.L(30023), 'roms', kodi.ICON, statuses='backlogged')
     folder(kodi.L(30004), 'search', kodi.ICON)
     li = xbmcgui.ListItem(kodi.L(30008), offscreen=True)
     li.setArt({'icon': kodi.ICON})
@@ -102,7 +103,7 @@ def collections(client, smart=False):
     end()
 
 
-def rom_item(client, rom, installed, choices, cached_ids, sortable=True):
+def rom_item(client, rom, installed, choices, cached_ids, favourite_ids=None, sortable=True):
     name = rom.get('name') or rom.get('fs_name_no_tags') or rom.get('fs_name')
     li = xbmcgui.ListItem(name, offscreen=True)
     launch.fill_game_tag(li, rom)
@@ -131,6 +132,7 @@ def rom_item(client, rom, installed, choices, cached_ids, sortable=True):
     if slug and cores.is_supported(slug, installed, choices):
         context.append((kodi.L(30010), run_plugin('choose_core', slug=slug,
                                                   name=rom.get('platform_display_name') or slug)))
+    context += props.context_items(rom, favourite_ids, run_plugin)
     if sortable:
         context.append((kodi.L(30016), run_plugin('sort_by')))
     li.addContextMenuItems(context)
@@ -141,7 +143,7 @@ def roms(client, params):
     offset = int(params.get('offset') or 0)
     limit = kodi.setting_int('page_size') or 100
     filters = {k: params[k] for k in ('platform_id', 'collection_id', 'smart_collection_id',
-                                      'search_term', 'favorite', 'last_played') if params.get(k)}
+                                      'search_term', 'favorite', 'last_played', 'statuses') if params.get(k)}
     if 'platform_id' in filters:
         filters['platform_ids'] = filters.pop('platform_id')
     filters['order_by'] = params.get('order_by') or kodi.setting('sort_by') or 'name'
@@ -150,11 +152,12 @@ def roms(client, params):
     installed = cores.installed_clients()
     choices = cores.user_choices()
     cached_ids = cache.cached_ids()
+    favourite_ids = props.favourite_ids(client)
     xbmcplugin.setContent(HANDLE, 'games')
     if params.get('name'):
         xbmcplugin.setPluginCategory(HANDLE, params['name'])
     for rom in items:
-        rom_item(client, rom, installed, choices, cached_ids, not params.get('order_by'))
+        rom_item(client, rom, installed, choices, cached_ids, favourite_ids, not params.get('order_by'))
     if offset + limit < (total or 0):
         nxt = {k: v for k, v in params.items() if k != 'action'}
         nxt['offset'] = offset + limit
@@ -305,6 +308,14 @@ def dispatch(action, params):
         details(client, params['rom_id'])
     elif action == 'sync_now':
         sync_now(client)
+    elif action == 'favourite':
+        props.favourite(client, params['rom_id'], params.get('add') == '1')
+    elif action == 'backlog':
+        props.backlog(client, params['rom_id'], params.get('add') == '1')
+    elif action == 'status':
+        props.status(client, params['rom_id'], params.get('current'))
+    elif action == 'hide':
+        props.hide(client, params['rom_id'], params.get('name'))
     else:
         kodi.log('unknown action {}'.format(action), xbmc.LOGWARNING)
         end(False)
