@@ -91,8 +91,12 @@ def core_label(core_id):
 
 
 def choose_for_platform(slug, platform_name=''):
+    mapped = mapped_cores(slug)
+    if not mapped:
+        kodi.error(kodi.L(30636, slug))
+        return
     installed = installed_clients()
-    cores = [c for c in mapped_cores(slug) if c in installed]
+    cores = [c for c in mapped if c in installed]
     if not cores:
         kodi.error(kodi.L(30611, platform_name or slug))
         return

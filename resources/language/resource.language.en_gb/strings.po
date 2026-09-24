@@ -450,6 +450,10 @@ msgctxt "#30635"
 msgid "Rating: {0:.0f}/100"
 msgstr ""
 
+msgctxt "#30636"
+msgid "This add-on has no emulator mapping for the RomM platform {0} yet."
+msgstr ""
+
 # Settings: sync 30700-30799
 
 msgctxt "#30700"
