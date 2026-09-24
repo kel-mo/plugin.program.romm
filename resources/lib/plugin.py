@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """plugin:// router and directory listings."""
 import json
+import os
 import traceback
 from urllib.parse import parse_qsl, urlencode
 
@@ -141,6 +142,8 @@ def rom_item(client, rom, installed, choices, cached_ids, favourite_ids=None, so
         li.setProperty('romm.regions', ', '.join(rom['regions']))
     slug = rom.get('platform_slug')
     context = [(kodi.L(30012), run_plugin('details', rom_id=rom['id']))]
+    if shots:
+        context.append((kodi.L(30034), 'SlideShow({})'.format(url_for('screenshots', rom_id=rom['id']))))
     if not cached:
         context.append((kodi.L(30015), run_plugin('download', rom_id=rom['id'])))
     else:
@@ -219,12 +222,29 @@ def details(client, rom_id):
         lines.append(released.isoformat())
     if meta.get('genres'):
         lines.append(', '.join(map(str, meta['genres'])))
+    if meta.get('companies'):
+        lines.append(', '.join(map(str, meta['companies'])))
+    if meta.get('player_count'):
+        lines.append(kodi.L(30634, meta['player_count']))
+    if meta.get('average_rating'):
+        lines.append(kodi.L(30635, float(meta['average_rating'])))
     if rom.get('regions'):
         lines.append(', '.join(rom['regions']))
     lines.append('{} ({})'.format(rom.get('fs_name'), launch._human(rom.get('fs_size_bytes'))))
     if rom.get('summary'):
         lines += ['', rom['summary']]
     xbmcgui.Dialog().textviewer(kodi.L(30012), '\n'.join(lines))
+
+
+def screenshots(client, rom_id):
+    rom = client.rom(rom_id)
+    xbmcplugin.setContent(HANDLE, 'images')
+    for shot in rom.get('merged_screenshots') or []:
+        url = client.asset_url(shot)
+        li = xbmcgui.ListItem(os.path.basename(shot), path=url, offscreen=True)
+        li.setArt({'thumb': url})
+        xbmcplugin.addDirectoryItem(HANDLE, url, li, isFolder=False)
+    end()
 
 
 def sync_now(client):
@@ -325,6 +345,8 @@ def dispatch(action, params):
         random_game(client)
     elif action == 'details':
         details(client, params['rom_id'])
+    elif action == 'screenshots':
+        screenshots(client, params['rom_id'])
     elif action == 'sync_now':
         sync_now(client)
     elif action == 'favourite':

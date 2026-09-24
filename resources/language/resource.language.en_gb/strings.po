@@ -154,6 +154,10 @@ msgctxt "#30033"
 msgid "Play status"
 msgstr ""
 
+msgctxt "#30034"
+msgid "Screenshots"
+msgstr ""
+
 # Settings: server 30100-30199
 
 msgctxt "#30100"
@@ -432,6 +436,14 @@ msgstr ""
 
 msgctxt "#30633"
 msgid "Updated in RomM"
+msgstr ""
+
+msgctxt "#30634"
+msgid "Players: {0}"
+msgstr ""
+
+msgctxt "#30635"
+msgid "Rating: {0:.0f}/100"
 msgstr ""
 
 # Settings: sync 30700-30799
