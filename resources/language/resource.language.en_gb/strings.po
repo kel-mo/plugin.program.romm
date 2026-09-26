@@ -245,11 +245,11 @@ msgid "Games per page"
 msgstr ""
 
 msgctxt "#30302"
-msgid "Hide platforms without an installed emulator"
+msgid "Hide platforms without an emulator"
 msgstr ""
 
 msgctxt "#30303"
-msgid "Only list platforms that Kodi can play with its installed game add-ons."
+msgid "Only list platforms that Kodi can play with an installed game add-on, or one it can install."
 msgstr ""
 
 msgctxt "#30304"

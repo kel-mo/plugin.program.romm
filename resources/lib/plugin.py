@@ -79,14 +79,15 @@ def platforms(client):
             continue
         slug = p.get('slug') or p.get('fs_slug')
         supported = cores.is_supported(slug, installed)
-        if hide and not supported:
+        installable = cores.installable(slug, available, choices)
+        if hide and not supported and not installable:
             continue
         name = p.get('display_name') or p.get('name') or slug
         label = '{} ({})'.format(name, p['rom_count'])
         if not supported:
             label += ' ' + kodi.L(30014)
         context = [(kodi.L(30010), run_plugin('choose_core', slug=slug, name=name))] if supported else []
-        if cores.installable(slug, available, choices):
+        if installable:
             context.append((kodi.L(30036), run_plugin('install_core', slug=slug, name=name)))
         folder(label, 'roms', icons.platform_icon(client, p), context=context,
                platform_id=p['id'], slug=slug, name=name)
