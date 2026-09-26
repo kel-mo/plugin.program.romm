@@ -82,10 +82,7 @@ def prepare(rom, client, progress, want_play=True):
     installed = cores.installed_clients()
     candidates = cores.candidates(slug, installed)
     if want_play and not candidates:
-        if not cores.offer_install(slug, rom.get('platform_display_name') or slug):
-            return None, None
-        installed = cores.installed_clients()
-        candidates = cores.candidates(slug, installed)
+        return None, None
 
     _dir, files = cache.ensure_rom(rom, client, progress.files)
     exts = cores.extensions(slug)
@@ -125,6 +122,11 @@ def resolve(handle, rom_id):
     progress = None
     try:
         rom = client.rom(rom_id)
+        slug = rom.get('platform_slug')
+        # before Progress: Kodi's install job closes the progress dialog
+        if not cores.candidates(slug) and not cores.offer_install(slug, rom.get('platform_display_name') or slug):
+            xbmcplugin.setResolvedUrl(handle, False, xbmcgui.ListItem())
+            return
         progress = Progress(kodi.L(30608, rom.get('name') or ''))
         launch_path, game_client = prepare(rom, client, progress)
         progress.close()

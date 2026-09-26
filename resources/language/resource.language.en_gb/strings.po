@@ -295,7 +295,7 @@ msgid "Keep at most"
 msgstr ""
 
 msgctxt "#30404"
-msgid "Oldest games are removed when the download folder uses more than this share of its free disk space. 0 disables the limit."
+msgid "Oldest games are removed when the download folder takes more than this share of the disk space it can use. 0 disables the limit."
 msgstr ""
 
 msgctxt "#30405"
@@ -367,7 +367,7 @@ msgid "No emulator installed for {0}"
 msgstr ""
 
 msgctxt "#30612"
-msgid "None of the emulators for this platform can be installed on this device."
+msgid "No emulator for this platform is available from Kodi's add-on repositories."
 msgstr ""
 
 msgctxt "#30613"
