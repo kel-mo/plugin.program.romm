@@ -104,9 +104,14 @@ def installable(slug, available=None, choices=None):
 
 def install(core_id):
     """Kodi's own install (or enable) prompt; True once the core is usable."""
-    builtin = 'EnableAddon' if core_id in _clients(enabled=False) else 'InstallAddon'
+    disabled = _clients(enabled=False)
+    builtin = 'EnableAddon' if core_id in disabled else 'InstallAddon'
     xbmc.executebuiltin('{}({})'.format(builtin, core_id), True)
-    return core_id in installed_clients()
+    if core_id in installed_clients():
+        return True
+    if core_id in disabled:                              # declined, or Kodi refused (incompatible)
+        kodi.error(kodi.L(30637), disabled[core_id])
+    return False
 
 
 def offer_install(slug, name):
