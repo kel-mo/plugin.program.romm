@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.program.romm" name="RomM" version="0.2.2" provider-name="kel-mo">
+<addon id="plugin.program.romm" name="RomM" version="0.2.3" provider-name="kel-mo">
   <requires>
     <import addon="xbmc.python" version="3.0.1"/>
     <import addon="script.module.pyqrcode" version="1.2.1"/>
@@ -16,7 +16,12 @@
     <license>GPL-2.0-or-later</license>
     <source>https://github.com/kel-mo/plugin.program.romm</source>
     <website>https://romm.app</website>
-    <news>v0.2.2
+    <news>v0.2.3
+- Offers to install a missing emulator, then starts the game
+- Install emulator: add more emulators for a platform from the context menu
+- More emulators and platforms, including the LibreELEC repository cores
+- Download folder limit is now a share of free disk space
+v0.2.2
 - PlayStation 2 games play with the LRPS2 core
 - Clearer message when the add-on has no emulator for a platform
 v0.2.1
