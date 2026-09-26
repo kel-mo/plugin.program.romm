@@ -188,13 +188,13 @@
             <heading>30401</heading>
           </control>
         </setting>
-        <setting id="cache_limit_gb" type="integer" label="30403" help="30404">
+        <setting id="cache_limit_pct" type="integer" label="30403" help="30404">
           <level>0</level>
-          <default>20</default>
+          <default>50</default>
           <constraints>
             <minimum>0</minimum>
-            <step>1</step>
-            <maximum>500</maximum>
+            <step>5</step>
+            <maximum>90</maximum>
           </constraints>
           <control type="slider" format="integer">
             <popup>false</popup>

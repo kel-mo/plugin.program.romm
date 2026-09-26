@@ -228,10 +228,11 @@ def remove(rom_id):
 
 
 def evict(keep_rom_id=None):
-    limit = kodi.setting_int('cache_limit_gb') * 1024 ** 3
-    if limit <= 0:
+    pct = kodi.setting_int('cache_limit_pct')
+    if pct <= 0:
         return
     size = dir_size(root())
+    limit = (size + shutil.disk_usage(root()).free) * pct // 100   # share of cache plus free space
     for _mtime, rid in entries():
         if size <= limit:
             break

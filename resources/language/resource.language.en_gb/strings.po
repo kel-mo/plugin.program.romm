@@ -295,11 +295,11 @@ msgid "Keep at most"
 msgstr ""
 
 msgctxt "#30404"
-msgid "Oldest games are removed when the download folder grows past this size. 0 disables the limit."
+msgid "Oldest games are removed when the download folder uses more than this share of its free disk space. 0 disables the limit."
 msgstr ""
 
 msgctxt "#30405"
-msgid "{0:d} GB"
+msgid "{0:d} %"
 msgstr ""
 
 msgctxt "#30406"
