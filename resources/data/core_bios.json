@@ -1,6 +1,11 @@
 {
-  "_notes": "Keyed by Kodi core id. Files are relative to the Kodi/libretro system directory; when every file of a core lives in one subdirectory it is given as 'subdir' and the names are bare, otherwise names carry their relative path (bluemsx). Derived from Grout bios/data/core_requirements.json where the core exists there (mednafen_psx_hw -> beetle-psx, mednafen_* -> beetle-*, mupen64plus_next -> mupen64plus-nx, puae -> uae, bsnes -> beetle-bsnes), otherwise from the BIOS section of docs.libretro.com/library/<core>/. Known discrepancies kept as Grout has them: o2em lists all four Videopac ROMs as required although the core only loads o2rom.bin; yabasanshiro marks saturn_bios.bin required while libretro docs say optional; dolphin's codehandler.bin is the Sys file Grout tracks, the optional GC IPL.bin lives under saves, not system.",
+  "_notes": "Keyed by Kodi core id. Files are relative to the Kodi/libretro system directory; when every file of a core lives in one subdirectory it is given as 'subdir' and the names are bare, otherwise names carry their relative path (bluemsx). Derived from Grout bios/data/core_requirements.json where the core exists there (mednafen_psx_hw -> beetle-psx, mednafen_* -> beetle-*, mupen64plus_next -> mupen64plus-nx, puae -> uae, puae2021 -> uae2021, bsnes -> beetle-bsnes and bsnes, genesis_plus_gx -> genplus, underscores -> dashes), snes9x2010 from its source, otherwise from the BIOS section of docs.libretro.com/library/<core>/. Known discrepancies kept as Grout has them: o2em lists all four Videopac ROMs as required although the core only loads o2rom.bin; yabasanshiro marks saturn_bios.bin required while libretro docs say optional; dolphin's codehandler.bin is the Sys file Grout tracks, the optional GC IPL.bin lives under saves, not system.",
   "game.libretro.2048": {
+    "_source": "docs.libretro.com (no BIOS section)",
+    "optional": [],
+    "required": []
+  },
+  "game.libretro.81": {
     "_source": "docs.libretro.com (no BIOS section)",
     "optional": [],
     "required": []
@@ -80,6 +85,16 @@
     ],
     "required": []
   },
+  "game.libretro.beetle-pce-fast": {
+    "_source": "grout:mednafen_pce_fast_libretro",
+    "optional": [
+      "syscard3.pce",
+      "syscard2.pce",
+      "syscard1.pce",
+      "gexpress.pce"
+    ],
+    "required": []
+  },
   "game.libretro.beetle-pcfx": {
     "_source": "grout:mednafen_pcfx_libretro",
     "optional": [],
@@ -145,6 +160,83 @@
       "Machines/Shared Roms/MSX.rom"
     ]
   },
+  "game.libretro.bsnes": {
+    "_source": "grout:bsnes_libretro",
+    "optional": [
+      "dsp1.data.rom",
+      "dsp1.program.rom",
+      "dsp1b.data.rom",
+      "dsp1b.program.rom",
+      "dsp2.data.rom",
+      "dsp2.program.rom",
+      "dsp3.data.rom",
+      "dsp3.program.rom",
+      "dsp4.data.rom",
+      "dsp4.program.rom",
+      "cx4.data.rom",
+      "st010.data.rom",
+      "st010.program.rom",
+      "st011.data.rom",
+      "st011.program.rom",
+      "st018.data.rom",
+      "st018.program.rom",
+      "SGB1.sfc",
+      "SGB2.sfc",
+      "BS-X.bin"
+    ],
+    "required": []
+  },
+  "game.libretro.bsnes-mercury-performance": {
+    "_source": "grout:bsnes_mercury_performance_libretro",
+    "optional": [
+      "dsp1.data.rom",
+      "dsp1.program.rom",
+      "dsp1b.data.rom",
+      "dsp1b.program.rom",
+      "dsp2.data.rom",
+      "dsp2.program.rom",
+      "dsp3.data.rom",
+      "dsp3.program.rom",
+      "dsp4.data.rom",
+      "dsp4.program.rom",
+      "st010.data.rom",
+      "st010.program.rom",
+      "st011.data.rom",
+      "st011.program.rom",
+      "st018.data.rom",
+      "st018.program.rom",
+      "sgb.boot.rom"
+    ],
+    "required": []
+  },
+  "game.libretro.bsnes2014-performance": {
+    "_source": "grout:bsnes2014_performance_libretro",
+    "optional": [
+      "dsp1.data.rom",
+      "dsp1.program.rom",
+      "dsp1b.data.rom",
+      "dsp1b.program.rom",
+      "dsp2.data.rom",
+      "dsp2.program.rom",
+      "dsp3.data.rom",
+      "dsp3.program.rom",
+      "dsp4.data.rom",
+      "dsp4.program.rom",
+      "st010.data.rom",
+      "st010.program.rom",
+      "st011.data.rom",
+      "st011.program.rom",
+      "st018.data.rom",
+      "st018.program.rom",
+      "sgb.boot.rom"
+    ],
+    "required": []
+  },
+  "game.libretro.cap32": {
+    "_source": "docs.libretro.com (no BIOS section)",
+    "optional": [],
+    "required": []
+  },
   "game.libretro.dolphin": {
     "_source": "grout:dolphin_libretro",
     "optional": [],
@@ -163,6 +255,36 @@
     "optional": [],
     "required": []
   },
+  "game.libretro.fbneo": {
+    "_source": "grout:fbneo_libretro",
+    "optional": [
+      "neogeo.zip",
+      "neocdz.zip",
+      "decocass.zip",
+      "isgsm.zip",
+      "midssio.zip",
+      "nmk004.zip",
+      "pgm.zip",
+      "skns.zip",
+      "ym2608.zip",
+      "cchip.zip",
+      "bubsys.zip",
+      "namcoc69.zip",
+      "namcoc70.zip",
+      "namcoc75.zip",
+      "coleco.zip",
+      "fdsbios.zip",
+      "msx.zip",
+      "ngp.zip",
+      "spectrum.zip",
+      "spec128.zip",
+      "spec1282a.zip",
+      "channelf.zip",
+      "hiscore.dat"
+    ],
+    "required": [],
+    "subdir": "fbneo/"
+  },
   "game.libretro.fceumm": {
     "_source": "grout:fceumm_libretro",
     "optional": [
@@ -171,6 +293,38 @@
       "gamegenie.nes"
     ],
     "required": []
+  },
+  "game.libretro.fmsx": {
+    "_source": "grout:fmsx_libretro",
+    "optional": [
+      "DISK.ROM",
+      "FMPAC.ROM",
+      "MSXDOS2.ROM",
+      "PAINTER.ROM",
+      "KANJI.ROM"
+    ],
+    "required": [
+      "MSX.ROM",
+      "MSX2.ROM",
+      "MSX2EXT.ROM",
+      "MSX2P.ROM",
+      "MSX2PEXT.ROM"
+    ]
+  },
+  "game.libretro.fuse": {
+    "_source": "grout:fuse_libretro",
+    "optional": [
+      "128p-0.rom",
+      "128p-1.rom",
+      "trdos.rom",
+      "gluck.rom",
+      "256s-0.rom",
+      "256s-1.rom",
+      "256s-2.rom",
+      "256s-3.rom"
+    ],
+    "required": [],
+    "subdir": "fuse/"
   },
   "game.libretro.gambatte": {
     "_source": "grout:gambatte_libretro",
@@ -185,6 +339,24 @@
     "optional": [
       "bios.sms",
       "bios.gg"
+    ],
+    "required": []
+  },
+  "game.libretro.genplus": {
+    "_source": "grout:genesis_plus_gx_libretro",
+    "optional": [
+      "bios_MD.bin",
+      "bios_CD_E.bin",
+      "bios_CD_U.bin",
+      "bios_CD_J.bin",
+      "bios_E.sms",
+      "bios_U.sms",
+      "bios_J.sms",
+      "bios.gg",
+      "sk.bin",
+      "sk2chip.bin",
+      "areplay.bin",
+      "ggenie.bin"
     ],
     "required": []
   },
@@ -307,6 +479,25 @@
       "jopac.bin"
     ]
   },
+  "game.libretro.opera": {
+    "_source": "grout:opera_libretro",
+    "optional": [
+      "panafz1.bin",
+      "panafz10.bin",
+      "panafz10-norsa.bin",
+      "panafz10e-anvil.bin",
+      "panafz10e-anvil-norsa.bin",
+      "goldstar.bin",
+      "sanyotry.bin",
+      "3do_arcade_saot.bin",
+      "panafz1-kanji.bin",
+      "panafz10ja-anvil-kanji.bin",
+      "panafz1j.bin",
+      "panafz1j-norsa.bin",
+      "panafz1j-kanji.bin"
+    ],
+    "required": []
+  },
   "game.libretro.pcsx-rearmed": {
     "_source": "grout:pcsx_rearmed_libretro",
     "optional": [
@@ -314,6 +505,15 @@
       "scph5501.bin",
       "scph5502.bin",
       "psxonpsp660.bin"
+    ],
+    "required": []
+  },
+  "game.libretro.picodrive": {
+    "_source": "grout:picodrive_libretro",
+    "optional": [
+      "bios_CD_E.bin",
+      "bios_CD_U.bin",
+      "bios_CD_J.bin"
     ],
     "required": []
   },
@@ -348,6 +548,21 @@
     "optional": [
       "dmg_boot.bin",
       "cgb_boot.bin"
+    ],
+    "required": []
+  },
+  "game.libretro.snes9x": {
+    "_source": "grout:snes9x_libretro",
+    "optional": [
+      "BS-X.bin",
+      "STBIOS.bin"
+    ],
+    "required": []
+  },
+  "game.libretro.snes9x2010": {
+    "_source": "snes9x2010:src/bsx.c",
+    "optional": [
+      "BS-X.bin"
     ],
     "required": []
   },
@@ -402,6 +617,37 @@
       "kick40060.CD32.ext"
     ]
   },
+  "game.libretro.uae2021": {
+    "_source": "grout:puae2021_libretro",
+    "optional": [
+      "kick33180.A500",
+      "kick37175.A500",
+      "kick37350.A600",
+      "kick40063.A600",
+      "kick39106.A1200",
+      "kick39106.A4000",
+      "kick40068.A4000",
+      "kick34005.CDTV"
+    ],
+    "required": [
+      "kick34005.A500",
+      "kick40068.A1200",
+      "kick40060.CD32",
+      "kick40060.CD32.ext"
+    ]
+  },
+  "game.libretro.uae4arm": {
+    "_source": "grout:uae4arm_libretro",
+    "optional": [],
+    "required": [
+      "kick34005.A500",
+      "kick40063.A600",
+      "kick40068.A1200",
+      "kick34005.CDTV",
+      "kick40060.CD32",
+      "kick40060.CD32.ext"
+    ]
+  },
   "game.libretro.vbam": {
     "_source": "grout:vbam_libretro",
     "optional": [
@@ -409,6 +655,44 @@
       "gb_bios.bin",
       "gbc_bios.bin"
     ],
+    "required": []
+  },
+  "game.libretro.vecx": {
+    "_source": "docs.libretro.com (no BIOS required)",
+    "optional": [],
+    "required": []
+  },
+  "game.libretro.vice_x128": {
+    "_source": "grout:vice_x128_libretro",
+    "optional": [
+      "JiffyDOS_C128.bin",
+      "JiffyDOS_C64.bin",
+      "JiffyDOS_1541-II.bin",
+      "JiffyDOS_1571_repl310654.bin",
+      "JiffyDOS_1581.bin"
+    ],
+    "required": [],
+    "subdir": "vice/"
+  },
+  "game.libretro.vice_x64": {
+    "_source": "grout:vice_x64_libretro",
+    "optional": [
+      "JiffyDOS_C64.bin",
+      "JiffyDOS_1541-II.bin",
+      "JiffyDOS_1571_repl310654.bin",
+      "JiffyDOS_1581.bin"
+    ],
+    "required": [],
+    "subdir": "vice/"
+  },
+  "game.libretro.vice_xplus4": {
+    "_source": "docs.libretro.com (none listed for Plus/4)",
+    "optional": [],
+    "required": []
+  },
+  "game.libretro.vice_xvic": {
+    "_source": "docs.libretro.com (none listed for VIC-20)",
+    "optional": [],
     "required": []
   },
   "game.libretro.virtualjaguar": {

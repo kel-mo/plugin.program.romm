@@ -4,6 +4,9 @@
     "ext": "srm",
     "mode": "kodi"
   },
+  "game.libretro.81": {
+    "mode": "none"
+  },
   "game.libretro.a5200": {
     "mode": "none"
   },
@@ -26,6 +29,10 @@
     "mode": "core"
   },
   "game.libretro.beetle-pce": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.beetle-pce-fast": {
     "ext": "srm",
     "mode": "kodi"
   },
@@ -61,6 +68,22 @@
     "mode": "core",
     "multi": true
   },
+  "game.libretro.bsnes": {
+    "ext": "srm",
+    "mode": "core"
+  },
+  "game.libretro.bsnes-mercury-performance": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.bsnes2014-performance": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.cap32": {
+    "mode": "core",
+    "multi": true
+  },
   "game.libretro.dolphin": {
     "mode": "core",
     "multi": true
@@ -73,15 +96,29 @@
     "mode": "core",
     "multi": true
   },
+  "game.libretro.fbneo": {
+    "mode": "core",
+    "multi": true
+  },
   "game.libretro.fceumm": {
     "ext": "srm",
     "mode": "kodi"
+  },
+  "game.libretro.fmsx": {
+    "mode": "none"
+  },
+  "game.libretro.fuse": {
+    "mode": "none"
   },
   "game.libretro.gambatte": {
     "ext": "srm",
     "mode": "kodi"
   },
   "game.libretro.gearsystem": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.genplus": {
     "ext": "srm",
     "mode": "kodi"
   },
@@ -135,8 +172,16 @@
   "game.libretro.o2em": {
     "mode": "none"
   },
+  "game.libretro.opera": {
+    "mode": "core",
+    "multi": true
+  },
   "game.libretro.pcsx-rearmed": {
     "_unverified": true,
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.picodrive": {
     "ext": "srm",
     "mode": "kodi"
   },
@@ -156,6 +201,14 @@
     "mode": "kodi"
   },
   "game.libretro.sameboy": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.snes9x": {
+    "ext": "srm",
+    "mode": "kodi"
+  },
+  "game.libretro.snes9x2010": {
     "ext": "srm",
     "mode": "kodi"
   },
@@ -184,9 +237,36 @@
     "mode": "core",
     "multi": true
   },
+  "game.libretro.uae2021": {
+    "mode": "core",
+    "multi": true
+  },
+  "game.libretro.uae4arm": {
+    "mode": "core",
+    "multi": true
+  },
   "game.libretro.vbam": {
     "ext": "srm",
     "mode": "kodi"
+  },
+  "game.libretro.vecx": {
+    "mode": "none"
+  },
+  "game.libretro.vice_x128": {
+    "mode": "core",
+    "multi": true
+  },
+  "game.libretro.vice_x64": {
+    "mode": "core",
+    "multi": true
+  },
+  "game.libretro.vice_xplus4": {
+    "mode": "core",
+    "multi": true
+  },
+  "game.libretro.vice_xvic": {
+    "mode": "core",
+    "multi": true
   },
   "game.libretro.virtualjaguar": {
     "ext": "srm",
