@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Map RomM platform slugs to Kodi game.libretro.* add-ons."""
+import xbmc
 import xbmcgui
 
 from . import kodi
@@ -53,6 +54,16 @@ def installed_clients():
     return set(a['addonid'] for a in result.get('addons', []) or [])
 
 
+def _clients(**params):
+    result = kodi.jsonrpc('Addons.GetAddons', type='kodi.gameclient', properties=['name'], **params) or {}
+    return {a['addonid']: a.get('name') or a['addonid'] for a in result.get('addons', []) or []}
+
+
+def available_clients():
+    """{core id: name} for game clients Kodi can install or enable here."""
+    return dict(_clients(installed=False), **_clients(enabled=False))
+
+
 def user_choices():
     return kodi.read_json(USER_FILE, {}) or {}
 
@@ -81,6 +92,47 @@ def candidates(slug, installed=None, choices=None):
     return cores
 
 
+def installable(slug, available=None, choices=None):
+    """Mapped cores Kodi can install or enable, best first. User choice first."""
+    available = available_clients() if available is None else available
+    cores = mapped_cores(slug)
+    choice = (user_choices() if choices is None else choices).get(canonical_slug(slug))
+    if choice in cores:
+        cores = [choice] + [c for c in cores if c != choice]
+    return [c for c in cores if c in available]
+
+
+def install(core_id):
+    """Kodi's own install (or enable) prompt; True once the core is usable."""
+    builtin = 'EnableAddon' if core_id in _clients(enabled=False) else 'InstallAddon'
+    xbmc.executebuiltin('{}({})'.format(builtin, core_id), True)
+    return core_id in installed_clients()
+
+
+def offer_install(slug, name):
+    """No core installed: offer the best one Kodi can get. True once installed."""
+    if not mapped_cores(slug):
+        xbmcgui.Dialog().ok(name, kodi.L(30636, slug))
+        return False
+    cores = installable(slug)
+    if not cores:
+        xbmcgui.Dialog().ok(kodi.L(30611, name), kodi.L(30612))
+        return False
+    return install(cores[0])
+
+
+def install_for_platform(slug, name):
+    """Context menu: first core as at launch, or pick another one to add."""
+    if not candidates(slug):
+        return offer_install(slug, name)
+    available = available_clients()
+    cores = installable(slug, available)
+    if not cores:
+        return False
+    idx = xbmcgui.Dialog().select('{}: {}'.format(kodi.L(30036), name), [available[c] for c in cores])
+    return idx >= 0 and install(cores[idx])
+
+
 def is_supported(slug, installed=None, choices=None):
     return bool(candidates(slug, installed, choices))
 
@@ -98,7 +150,7 @@ def choose_for_platform(slug, platform_name=''):
     installed = installed_clients()
     cores = [c for c in mapped if c in installed]
     if not cores:
-        kodi.error(kodi.L(30611, platform_name or slug))
+        offer_install(slug, platform_name or slug)
         return
     labels = [kodi.L(30013)] + [core_label(c) for c in cores]
     current = user_choices().get(canonical_slug(slug))

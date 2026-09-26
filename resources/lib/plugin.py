@@ -70,6 +70,8 @@ def root():
 
 def platforms(client):
     installed = cores.installed_clients()
+    available = cores.available_clients()
+    choices = cores.user_choices()
     hide = kodi.setting_bool('hide_unsupported')
     items = sorted(client.platforms(), key=lambda p: (p.get('display_name') or p.get('name') or '').lower())
     for p in items:
@@ -83,7 +85,9 @@ def platforms(client):
         label = '{} ({})'.format(name, p['rom_count'])
         if not supported:
             label += ' ' + kodi.L(30014)
-        context = [(kodi.L(30010), run_plugin('choose_core', slug=slug, name=name))]
+        context = [(kodi.L(30010), run_plugin('choose_core', slug=slug, name=name))] if supported else []
+        if cores.installable(slug, available, choices):
+            context.append((kodi.L(30036), run_plugin('install_core', slug=slug, name=name)))
         folder(label, 'roms', icons.platform_icon(client, p), context=context,
                platform_id=p['id'], slug=slug, name=name)
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_NONE)
@@ -120,7 +124,7 @@ def browse(client, kind=None):
     end()
 
 
-def rom_item(client, rom, installed, choices, cached_ids, favourite_ids=None, sortable=True):
+def rom_item(client, rom, installed, choices, cached_ids, favourite_ids=None, sortable=True, available=None):
     name = rom.get('name') or rom.get('fs_name_no_tags') or rom.get('fs_name')
     li = xbmcgui.ListItem(name, offscreen=True)
     launch.fill_game_tag(li, rom)
@@ -153,6 +157,9 @@ def rom_item(client, rom, installed, choices, cached_ids, favourite_ids=None, so
     if slug and cores.is_supported(slug, installed, choices):
         context.append((kodi.L(30010), run_plugin('choose_core', slug=slug,
                                                   name=rom.get('platform_display_name') or slug)))
+    if slug and available and cores.installable(slug, available, choices):
+        context.append((kodi.L(30036), run_plugin('install_core', slug=slug,
+                                                  name=rom.get('platform_display_name') or slug)))
     context += props.context_items(rom, favourite_ids, run_plugin)
     if sortable:
         context.append((kodi.L(30016), run_plugin('sort_by')))
@@ -173,13 +180,14 @@ def roms(client, params):
     items, total = client.roms(offset=offset, limit=limit, **filters)
     installed = cores.installed_clients()
     choices = cores.user_choices()
+    available = cores.available_clients()
     cached_ids = cache.cached_ids()
     favourite_ids = props.favourite_ids(client)
     xbmcplugin.setContent(HANDLE, 'games')
     if params.get('name'):
         xbmcplugin.setPluginCategory(HANDLE, params['name'])
     for rom in items:
-        rom_item(client, rom, installed, choices, cached_ids, favourite_ids, not params.get('order_by'))
+        rom_item(client, rom, installed, choices, cached_ids, favourite_ids, not params.get('order_by'), available)
     if offset + limit < (total or 0):
         nxt = {k: v for k, v in params.items() if k != 'action'}
         nxt['offset'] = offset + limit
@@ -296,6 +304,10 @@ def run(argv):
     if action == 'choose_core':
         cores.choose_for_platform(params.get('slug'), params.get('name'))
         return xbmc.executebuiltin('Container.Refresh')
+    if action == 'install_core':
+        if cores.install_for_platform(params.get('slug'), params.get('name')):
+            xbmc.executebuiltin('Container.Refresh')
+        return
     if action == 'sort_by':
         return choose_sort()
     if action == 'reset_cores':

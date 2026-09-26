@@ -162,6 +162,10 @@ msgctxt "#30035"
 msgid "Other versions ({0})"
 msgstr ""
 
+msgctxt "#30036"
+msgid "Install emulator"
+msgstr ""
+
 # Settings: server 30100-30199
 
 msgctxt "#30100"
@@ -363,7 +367,7 @@ msgid "No emulator installed for {0}"
 msgstr ""
 
 msgctxt "#30612"
-msgid "Install a game add-on for this platform, for example {0}."
+msgid "None of the emulators for this platform can be installed on this device."
 msgstr ""
 
 msgctxt "#30613"

@@ -82,13 +82,10 @@ def prepare(rom, client, progress, want_play=True):
     installed = cores.installed_clients()
     candidates = cores.candidates(slug, installed)
     if want_play and not candidates:
-        name = rom.get('platform_display_name') or slug
-        mapped = cores.mapped_cores(slug)
-        if mapped:
-            xbmcgui.Dialog().ok(kodi.L(30611, name), kodi.L(30612, mapped[0]))
-        else:
-            xbmcgui.Dialog().ok(name, kodi.L(30636, slug))
-        return None, None
+        if not cores.offer_install(slug, rom.get('platform_display_name') or slug):
+            return None, None
+        installed = cores.installed_clients()
+        candidates = cores.candidates(slug, installed)
 
     _dir, files = cache.ensure_rom(rom, client, progress.files)
     exts = cores.extensions(slug)
