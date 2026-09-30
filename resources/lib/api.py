@@ -331,7 +331,7 @@ class RommClient:
         kodi.ensure_dir(os.path.dirname(dest))
         part = dest + '.part'
         done = os.path.getsize(part) if os.path.exists(part) else 0
-        if expected_size and done > expected_size:       # stale partial from a changed file
+        if expected_size and 0 < expected_size < done:   # stale partial from a changed file
             os.remove(part)
             done = 0
         extra = {'Range': 'bytes={}-'.format(done)} if done else {}

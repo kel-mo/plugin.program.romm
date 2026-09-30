@@ -49,8 +49,8 @@ def mirror(client, platform, core_ids, progress=None):
         if fw.get('missing_from_fs'):
             continue
         src = cache.safe_join(staging, fw['file_name'])
-        size = fw.get('file_size_bytes') or -1
-        if not (os.path.exists(src) and os.path.getsize(src) == size):
+        size = fw.get('file_size_bytes')
+        if not (os.path.exists(src) and (not size or os.path.getsize(src) == size)):
             if progress:
                 progress(i, len(firmware), fw['file_name'])
             client.download(client.firmware_url(fw), src, size)
