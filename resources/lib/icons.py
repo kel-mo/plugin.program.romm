@@ -37,9 +37,7 @@ def platform_icon(client, platform):
     if os.path.exists(png):
         return png
     try:
-        resp = client.request('GET', '/assets/platforms/{}.ico'.format(slug), auth=False, raw=True)
-        data = resp.read()
-        resp.close()
+        data = client.request('GET', '/assets/platforms/{}.ico'.format(slug), auth=False, raw=True)
     except ApiError as e:
         kodi.debug('no platform icon for {}: {}'.format(slug, e))
         return fallback

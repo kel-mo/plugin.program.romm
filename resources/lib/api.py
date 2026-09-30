@@ -85,7 +85,7 @@ class RommClient:
 
     def request(self, method, path, params=None, body=None, auth=True, timeout=None, raw=False,
                 files=None):
-        """files: {field: (filename, bytes)} sends multipart/form-data instead of JSON."""
+        """files: {field: (filename, bytes)} sends multipart/form-data instead of JSON; raw returns the body bytes."""
         if not self.base_url:
             raise ApiError(kodi.L(30601))
         if aborting():
@@ -102,7 +102,8 @@ class RommClient:
         req = Request(url, data=data, headers=self.headers(auth, extra), method=method)
         kodi.debug('{} {}'.format(method, url))
         try:
-            resp = urlopen(req, timeout=timeout or self.timeout, context=self.ssl_ctx)
+            with urlopen(req, timeout=timeout or self.timeout, context=self.ssl_ctx) as resp:
+                payload = resp.read()
         except HTTPError as e:
             detail = None
             try:
@@ -112,12 +113,10 @@ class RommClient:
             if e.code in (401, 403):
                 raise AuthError(kodi.L(30615), e.code, detail)
             raise ApiError('HTTP {} for {}: {}'.format(e.code, path, detail or e.reason), e.code, detail)
-        except (URLError, socket.timeout, OSError) as e:
+        except (URLError, socket.timeout, OSError, HTTPException) as e:
             raise ApiError('{}: {}'.format(kodi.L(30614), e))
         if raw:
-            return resp
-        payload = resp.read()
-        resp.close()
+            return payload
         if not payload:
             return None
         try:
@@ -292,11 +291,8 @@ class RommClient:
 
     def download_save(self, save_id, device_id=None, session_id=None):
         """Returns the save bytes."""
-        resp = self.request('GET', '/api/saves/{}/content'.format(int(save_id)),
+        return self.request('GET', '/api/saves/{}/content'.format(int(save_id)),
                             params=dict(device_id=device_id, session_id=session_id), raw=True)
-        data = resp.read()
-        resp.close()
-        return data
 
     def confirm_save_downloaded(self, save_id, device_id):
         return self.post('/api/saves/{}/downloaded'.format(int(save_id)), {'device_id': device_id})
