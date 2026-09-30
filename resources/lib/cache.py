@@ -12,6 +12,7 @@ from . import kodi
 from .cores import LAUNCH_PRIORITY
 
 MARKER = '.romm.json'
+EXTRACTED = '.romm-extracted'
 ARCHIVE_EXTS = {'zip'}
 SKIP_CATEGORIES = {'manual', 'walkthrough', 'patch', 'cheat', 'soundtrack', 'screenshot'}
 
@@ -127,7 +128,7 @@ def extract_if_needed(local_files, supported_exts, progress=None):
         return local_files
     archive = local_files[0]
     target = os.path.splitext(archive)[0]
-    if os.path.isdir(target) and os.listdir(target):
+    if os.path.exists(os.path.join(target, EXTRACTED)):
         return _walk(target)
     if progress:
         progress(0, 1, 1, 1, os.path.basename(archive))
@@ -140,6 +141,8 @@ def extract_if_needed(local_files, supported_exts, progress=None):
             z.extract(member, target)
     extracted = _walk(target)
     if extracted:
+        with open(os.path.join(target, EXTRACTED), 'w'):
+            pass
         os.remove(archive)
         marker = kodi.read_json(os.path.join(os.path.dirname(archive), MARKER))
         if marker:
