@@ -9,6 +9,7 @@ import socket
 import ssl
 import time
 import uuid
+from http.client import HTTPException
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urlencode
 from urllib.request import Request, urlopen
@@ -359,7 +360,11 @@ class RommClient:
         last = 0
         with open(part, mode) as f:
             while True:
-                chunk = resp.read(CHUNK)
+                try:
+                    chunk = resp.read(CHUNK)
+                except (OSError, HTTPException) as e:
+                    resp.close()
+                    raise ApiError(kodi.L(30614) + ': ' + str(e))
                 if not chunk:
                     break
                 f.write(chunk)
@@ -371,6 +376,8 @@ class RommClient:
                         resp.close()
                         raise ApiError('cancelled')
         resp.close()
+        if length and length.isdigit() and done < total:    # closed early; .part resumes next time
+            raise ApiError(kodi.L(30614) + ': incomplete download')
         os.replace(part, dest)
         return dest
 
