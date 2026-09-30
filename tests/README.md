@@ -10,3 +10,9 @@ PYTHONPATH=tests/stubs:. python3 -c 'from resources.lib import plugin; \
 
 Listed items are in `xbmcplugin.ITEMS`, dialogs answer from `xbmcgui.ANSWERS`. Actions run
 against the live server: stick to read-only ones unless you revert what you change.
+
+Regression suite (offline: local mock server, temp profile and cache, settings cleared):
+
+```
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -b
+```
