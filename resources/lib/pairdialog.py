@@ -4,7 +4,7 @@ import xbmcgui
 
 from . import kodi
 
-ACTION_CANCEL = {9, 10, 92, 216}  # parent dir, previous menu, nav back, stop
+ACTION_CANCEL = {9, 10, 92, 13}  # parent dir, previous menu, nav back, stop
 
 
 class PairDialog(xbmcgui.WindowDialog):
