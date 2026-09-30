@@ -2,6 +2,7 @@
 """Thin helpers around the Kodi Python API."""
 import json
 import os
+import tempfile
 
 import xbmc
 import xbmcaddon
@@ -82,8 +83,8 @@ def read_json(path, default=None):
 
 def write_json(path, data):
     ensure_dir(os.path.dirname(path))
-    tmp = path + '.tmp'
-    with open(tmp, 'w', encoding='utf-8') as f:
+    fd, tmp = tempfile.mkstemp(prefix=os.path.basename(path) + '.', suffix='.tmp', dir=os.path.dirname(path))
+    with os.fdopen(fd, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2, sort_keys=True)
     os.replace(tmp, path)
 
