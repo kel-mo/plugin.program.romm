@@ -97,7 +97,7 @@ def ensure_rom(rom, client, progress=None):
     files = _game_files(rom)
     local = []
     if rom.get('has_multiple_files') and files:
-        subdir = os.path.join(directory, rom.get('fs_name_no_ext') or rom.get('fs_name') or 'game')
+        subdir = safe_join(directory, rom.get('fs_name_no_ext') or rom.get('fs_name') or 'game')
         total = len(files)
         for i, f in enumerate(files, 1):
             dest = safe_join(subdir, _relative_name(rom, f).replace('/', os.sep))

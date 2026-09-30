@@ -33,7 +33,7 @@ def platform_icon(client, platform):
     if not slug:
         return fallback
     icon_dir = os.path.join(cache.root(), 'icons')
-    png = os.path.join(icon_dir, slug + '.png')
+    png = cache.safe_join(icon_dir, slug + '.png')
     if os.path.exists(png):
         return png
     try:

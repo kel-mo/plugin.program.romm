@@ -43,7 +43,7 @@ def mirror(client, platform, core_ids, progress=None):
     firmware = client.firmware(platform['id'])
     if not firmware:
         return 0
-    staging = os.path.join(cache.root(), 'bios', platform.get('slug') or str(platform['id']))
+    staging = cache.safe_join(os.path.join(cache.root(), 'bios'), platform.get('slug') or str(platform['id']))
     copied = 0
     for i, fw in enumerate(firmware, 1):
         if fw.get('missing_from_fs'):
