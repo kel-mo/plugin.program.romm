@@ -396,6 +396,7 @@ def _multipart(files):
             body += data + b'\r\n'
             continue
         ctype = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
+        filename = filename.replace('"', '%22').replace('\r', '%0D').replace('\n', '%0A')
         body += ('--{}\r\nContent-Disposition: form-data; name="{}"; filename="{}"\r\n'
                  'Content-Type: {}\r\n\r\n'.format(boundary, field, filename, ctype)).encode('utf-8')
         body += data

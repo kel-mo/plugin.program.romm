@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Background service: tracks RetroPlayer playback of cached games for play sessions and
-save sync. Registered in addon.xml as xbmc.python.service."""
+save sync. Registered in addon.xml as xbmc.service."""
 import traceback
 from collections import deque
 

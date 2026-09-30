@@ -16,6 +16,7 @@ BASE = 'plugin://{}/'.format(kodi.ADDON_ID)
 HANDLE = -1
 SORTS = [('name', 30305), ('first_release_date', 30306), ('average_rating', 30307),
          ('created_at', 30308), ('last_played', 30309)]
+RUN_ACTIONS = {'download', 'random', 'details', 'versions', 'sync_now', 'favourite', 'backlog', 'status', 'hide'}
 
 
 def url_for(action, **params):
@@ -29,6 +30,11 @@ def run_plugin(action, **params):
 
 def end(succeeded=True, cache_to_disc=False):
     xbmcplugin.endOfDirectory(HANDLE, succeeded, cacheToDisc=cache_to_disc)
+
+
+def fail(action):
+    if action not in RUN_ACTIONS:                # RunPlugin actions have no directory to end
+        end(False)
 
 
 def folder(label, action, icon=None, art=None, context=None, **params):
@@ -328,7 +334,7 @@ def run(argv):
         if action == 'play':
             xbmcplugin.setResolvedUrl(HANDLE, False, xbmcgui.ListItem())
         kodi.error(kodi.L(30600))
-        return end(False)
+        return fail(action)
 
     if action == 'play':
         return launch.resolve(HANDLE, params['rom_id'])
@@ -339,15 +345,15 @@ def run(argv):
         dispatch(action, params)
     except AuthError as e:
         kodi.error(str(e))
-        end(False)
+        fail(action)
     except ApiError as e:
         kodi.log('request failed: {}'.format(e), xbmc.LOGERROR)
         kodi.error(str(e))
-        end(False)
+        fail(action)
     except Exception as e:  # keep Kodi from waiting on a listing that never ends
         kodi.log(traceback.format_exc(), xbmc.LOGERROR)
         kodi.error(str(e))
-        end(False)
+        fail(action)
 
 
 def dispatch(action, params):

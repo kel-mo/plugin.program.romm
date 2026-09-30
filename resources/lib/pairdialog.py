@@ -29,9 +29,6 @@ class PairDialog(xbmcgui.WindowDialog):
     def tick(self, remaining):
         self.progress.setPercent(int(100 * remaining / self.expires_in))
 
-    def set_status(self, text):
-        self.status.setLabel(text)
-
     def onAction(self, action):
         if action.getId() in ACTION_CANCEL:
             self.cancelled = True

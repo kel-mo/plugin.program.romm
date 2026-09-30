@@ -35,16 +35,16 @@ def platform_icon(client, platform):
     icon_dir = os.path.join(cache.root(), 'icons')
     png = cache.safe_join(icon_dir, slug + '.png')
     if os.path.exists(png):
-        return png
+        return png if os.path.getsize(png) else fallback     # empty: server has no PNG icon
     try:
         data = client.request('GET', '/assets/platforms/{}.ico'.format(slug), auth=False, raw=True)
     except ApiError as e:
         kodi.debug('no platform icon for {}: {}'.format(slug, e))
-        return fallback
+        if e.status != 404:
+            return fallback
+        data = b''
     blob = _png_from_ico(data)
-    if not blob:
-        return fallback
     kodi.ensure_dir(icon_dir)
     with open(png, 'wb') as f:
-        f.write(blob)
-    return png
+        f.write(blob or b'')
+    return png if blob else fallback
