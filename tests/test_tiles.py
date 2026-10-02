@@ -126,13 +126,14 @@ class Tiles(unittest.TestCase):
     @unittest.skipUnless(PIL, 'needs PIL')
     def test_one_text_size_fits_the_longest_name(self):
         from PIL import Image, ImageDraw
+        draw = ImageDraw.Draw(Image.new('L', (1, 1)))
         with mock.patch.object(tiles, 'font_file', lambda: (None, False)):
             size = tiles.text_size(['Search', 'Smart collections'])
+            self.assertEqual(size, tiles.text_size(['collections']))           # wraps rather than shrinks
             face, stroke = tiles.font(size)
-            self.assertLess(size, tiles.text_size(['Search']))
-        draw = ImageDraw.Draw(Image.new('L', (1, 1)))
-        self.assertLessEqual(draw.textbbox((0, 0), 'Smart collections', font=face, stroke_width=stroke)[2],
-                             tiles.SIZE * 0.8)
+            self.assertEqual(tiles.lines(draw, 'Smart collections', face, stroke), 'Smart\ncollections')
+            self.assertEqual(tiles.lines(draw, 'Search', face, stroke), 'Search')
+            self.assertLess(tiles.text_size(['Search', 'Supercalifragilistic']), tiles.text_size(['Search']))
 
     def test_skin_bold_font_first(self):
         skin = tempfile.mkdtemp()
