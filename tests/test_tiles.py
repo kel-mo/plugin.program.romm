@@ -151,6 +151,15 @@ class Tiles(unittest.TestCase):
         top, bottom = glyphs[1] - halo[1], halo[3] - glyphs[3]
         self.assertLessEqual(abs(top - bottom), 3)           # as far past the last line as the first
 
+    def test_a_refresh_past_midnight_keeps_its_day(self):
+        lib = Library(games=[game(i) for i in range(1, 30)])
+        with mock.patch.object(tiles, 'render', lambda data, label, dest, size: open(dest, 'wb').close()), \
+                mock.patch.object(kodi, 'jsonrpc', lambda *a, **k: {}), \
+                mock.patch.object(tiles, 'drawing', lambda day=None: (day or 'tomorrow') + ' v'):
+            tiles.refresh(lib, xbmc.Monitor())
+        with open(tiles.stamp()) as f:
+            self.assertEqual(f.read(), tiles.date.today().isoformat() + ' v')
+
     def test_skin_bold_font_first(self):
         skin = tempfile.mkdtemp()
         self.addCleanup(shutil.rmtree, skin)
