@@ -11,7 +11,7 @@ from .api import ApiError, RommClient
 
 QUEUE = 'play-sessions.json'
 HEARTBEAT_EVERY = 30
-SERVICE_TIMEOUT = 10                    # short: the service must never sit in a socket at shutdown
+SERVICE_TIMEOUT = 4                     # short: a socket wait at shutdown must end inside Kodi's five-second wait
 BATCH = 100
 MAX_ATTEMPTS = 5
 FAILED = object()

@@ -121,7 +121,7 @@ def run():
         except Exception:
             kodi.log(traceback.format_exc(), xbmc.LOGERROR)
     # Kodi is shutting down: no network from here on, only queue the open session to disk.
-    # Pending uploads flush on the next start; the server-side heartbeat expires by itself.
+    # Pending uploads flush after the next game; the server-side heartbeat expires by itself.
     try:
         tracker.stop(network=False)
     except Exception:
