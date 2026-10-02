@@ -115,6 +115,10 @@ class Tiles(unittest.TestCase):
         self.assertEqual(im.size, (tiles.SIZE, tiles.SIZE))
         self.assertEqual(im.crop((128, 216, 384, 296)).getextrema()[1], 255)    # white text in the middle
         self.assertLess(im.crop((0, 0, 64, 64)).getextrema()[1], 160)          # darkened picture at the corner
+        row = [im.getpixel((x, tiles.SIZE // 2)) for x in range(tiles.SIZE)]
+        first = next(x for x, v in enumerate(row) if v > 250)
+        self.assertGreater(row[0], 90)
+        self.assertLess(min(row[first - 12:first]), 70)                        # darker still beside the name
 
     @unittest.skipUnless(PIL, 'needs PIL')
     def test_one_text_size_fits_the_longest_name(self):
