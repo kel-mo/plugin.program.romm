@@ -4,7 +4,6 @@ import shutil
 import sys
 import tempfile
 import unittest
-import xml.etree.ElementTree as ET
 from unittest import mock
 
 import support
@@ -69,13 +68,13 @@ class Tiles(unittest.TestCase):
         self.assertIsNone(tiles.picture(game(1, shot=False, cover=False)))
         self.assertIsNone(tiles.picture({'id': 1, 'merged_screenshots': ['https://images.igdb.com/x.jpg']}))
 
-    def test_root_prefers_favourites(self):
+    def test_favourites_prefer_a_favourite(self):
         lib = Library(games=[game(i) for i in range(1, 30)], favourites=[game(100), game(101)])
-        self.assertIn(tiles.pick(lib, tiles.ROOT, DAY)['id'], (100, 101))
+        self.assertIn(tiles.pick(lib, 'favourites', DAY)['id'], (100, 101))
 
-    def test_root_falls_back_to_any_game(self):
+    def test_favourites_fall_back_to_any_game(self):
         lib = Library(games=[game(1, shot=False, cover=False), game(2)], favourites=[game(100, shot=False, cover=False)])
-        self.assertEqual(tiles.pick(lib, tiles.ROOT, DAY)['id'], 2)
+        self.assertEqual(tiles.pick(lib, 'favourites', DAY)['id'], 2)
 
     def test_last_played_shows_the_last_game_with_a_picture(self):
         lib = Library(games=[game(1)], played=[game(7, shot=False, cover=False), game(8, shot=False), game(9)])
@@ -93,7 +92,7 @@ class Tiles(unittest.TestCase):
     def test_offline_gives_no_game(self):
         server = support.Server()
         self.addCleanup(server.close)
-        self.assertIsNone(tiles.pick(RommClient(server.url, 't', timeout=2), tiles.ROOT, DAY))
+        self.assertIsNone(tiles.pick(RommClient(server.url, 't', timeout=2), 'favourites', DAY))
 
     def test_without_pil_the_picture_is_used(self):
         dest = os.path.join(kodi.ensure_dir(tiles.tile_dir()), 'x.jpg')
@@ -186,18 +185,18 @@ class Tiles(unittest.TestCase):
         with mock.patch.object(tiles, 'render', lambda data, label, dest, size: open(dest, 'wb').close()), \
                 mock.patch.object(kodi, 'jsonrpc', rpc):
             self.assertTrue(tiles.due())
-            self.assertEqual(tiles.refresh(lib, xbmc.Monitor()), len(tiles.FOLDERS) + 1)
+            self.assertEqual(tiles.refresh(lib, xbmc.Monitor()), len(tiles.FOLDERS))
             self.assertFalse(tiles.due())
-        for key in [tiles.ROOT] + list(tiles.FOLDERS):
+        for key in tiles.FOLDERS:
             self.assertEqual(len(tiles.drawn(key)), 1, key)
-        self.assertEqual(len(set(lib.fetched)), len(tiles.FOLDERS) + 1)         # a different game on each
+        self.assertEqual(len(set(lib.fetched)), len(tiles.FOLDERS))             # a different game on each
         self.assertIn('/3/', lib.fetched[list(tiles.FOLDERS).index('last_played')])   # folders pick first
         self.assertEqual(calls, ['Textures.GetTextures', 'Textures.RemoveTexture'])
 
     def test_waits_for_the_names(self):
         lib = Library(games=[game(i) for i in range(1, 30)])
         real = kodi.L
-        with mock.patch.object(kodi, 'L', lambda i, *a: '' if i == 30037 else real(i, *a)), \
+        with mock.patch.object(kodi, 'L', lambda i, *a: '' if i == 30023 else real(i, *a)), \
                 mock.patch.object(tiles, 'render', lambda *a: self.fail('drew without a name')):
             self.assertEqual(tiles.refresh(lib, xbmc.Monitor()), 0)
         self.assertEqual(lib.fetched, [])
@@ -229,52 +228,23 @@ class Tiles(unittest.TestCase):
         self.assertEqual(tiles.current('platforms'), new)
         self.assertIsNone(tiles.current('search'))
 
-    def test_old_drawings_go_unless_a_favourite_shows_them(self):
-        kept, gone, newest, newest2 = self.draw('romm-100.jpg', 'search-100.jpg', 'romm-200.jpg', 'search-200.jpg')
-        fav = os.path.join(tiles.tile_dir(), 'favourites.xml')
-        with open(fav, 'w') as f:
-            f.write('<favourites><favourite name="RomM" thumb="{}">RunAddon(&quot;plugin.program.romm&quot;)'
-                    '</favourite></favourites>'.format(kept))
-        with mock.patch.object(tiles, 'favourites_file', lambda: fav), \
-                mock.patch.object(kodi, 'jsonrpc', lambda *a, **k: {}):
+    def test_old_drawings_go(self):
+        gone, newest, other, stray = self.draw('search-100.jpg', 'search-200.jpg', 'platforms-100.jpg', 'romm-100.jpg')
+        with mock.patch.object(kodi, 'jsonrpc', lambda *a, **k: {}):
             tiles.tidy()
-        self.assertEqual([os.path.exists(p) for p in (kept, gone, newest, newest2)], [True, False, True, True])
+        self.assertEqual([os.path.exists(p) for p in (gone, newest, other, stray)], [False, True, True, False])
 
     def test_menu_shows_tiles(self):
         tile, = self.draw('last_played-100.jpg')
         xbmcaddon.SETTINGS.update({'server_url': 'http://romm', 'token': 't'})
         del xbmcplugin.ITEMS[:]
         plugin.root()
-        art = {tiles.target('PlayMedia("{}")'.format(url)): li.art.get('thumb') for url, li, _ in xbmcplugin.ITEMS}
-        self.assertEqual(sorted(art), sorted(tiles.FOLDERS))               # every menu entry has its own tile
-        self.assertEqual(art['last_played'], tile)
-        self.assertEqual(art['platforms'], kodi.ICON)                      # no tile drawn yet
+        art = {li.label: li.art.get('thumb') for url, li, _ in xbmcplugin.ITEMS}
+        self.assertEqual(sorted(art), sorted(kodi.L(i) for i in tiles.FOLDERS.values()))   # every menu entry has its own tile
+        self.assertEqual(art[kodi.L(30002)], tile)
+        self.assertEqual(art[kodi.L(30000)], kodi.ICON)                    # no tile drawn yet
         xbmcaddon.SETTINGS['tiles'] = 'false'
         self.assertEqual(tiles.art('last_played'), kodi.ICON)
-
-    def test_favourites_point_at_tiles(self):
-        root, played = self.draw('romm-100.jpg', 'last_played-100.jpg')
-        fav = os.path.join(tiles.tile_dir(), 'favourites.xml')
-        rows = [('RomM', kodi.ICON, 'RunAddon(plugin.program.romm)'),
-                ('Played', kodi.ICON, 'ActivateWindow(Programs,&quot;plugin://plugin.program.romm/?last_played=true'
-                                      '&amp;order_by=last_played&amp;action=roms&quot;,return)'),
-                ('SNES', kodi.ICON, 'ActivateWindow(Programs,&quot;plugin://plugin.program.romm/?platform_id=3'
-                                    '&amp;action=roms&quot;,return)'),
-                ('Mine', '/my/own.png', 'RunAddon(&quot;plugin.program.romm&quot;)'),
-                ('Immich', '/immich.png', 'RunAddon(&quot;plugin.image.immich&quot;)')]
-        with open(fav, 'w') as f:
-            f.write('<favourites>\n' + ''.join('    <favourite name="{}" thumb="{}">{}</favourite>\n'.format(*r)
-                                                for r in rows) + '</favourites>\n')
-        thumbs = lambda: [e.get('thumb') for e in ET.parse(fav).getroot()]
-        with mock.patch.object(tiles, 'favourites_file', lambda: fav):
-            tiles.point_favourites()
-            self.assertEqual(thumbs(), [root, played, kodi.ICON, '/my/own.png', '/immich.png'])
-            newer, = self.draw('romm-200.jpg')
-            tiles.point_favourites()
-            self.assertEqual(thumbs()[0], newer)                           # follows the newest drawing
-            xbmcaddon.SETTINGS['tiles'] = 'false'
-            tiles.point_favourites()
-            self.assertEqual(thumbs(), [kodi.ICON, kodi.ICON, kodi.ICON, '/my/own.png', '/immich.png'])
 
 
 if __name__ == '__main__':

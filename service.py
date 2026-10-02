@@ -126,10 +126,6 @@ def run():
         tracker.stop(network=False)
     except Exception:
         kodi.log(traceback.format_exc(), xbmc.LOGERROR)
-    try:
-        tiles.point_favourites()
-    except Exception:
-        kodi.log(traceback.format_exc(), xbmc.LOGERROR)
     drawer.join(SERVICE_TIMEOUT)
 
 

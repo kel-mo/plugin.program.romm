@@ -166,10 +166,6 @@ msgctxt "#30036"
 msgid "Install emulator"
 msgstr ""
 
-msgctxt "#30037"
-msgid "ROMs"
-msgstr ""
-
 # Settings: server 30100-30199
 
 msgctxt "#30100"
@@ -285,7 +281,7 @@ msgid "Game tiles"
 msgstr ""
 
 msgctxt "#30311"
-msgid "Shows a picture from one of your games, with the folder's name over it, on RomM's menu and on RomM favourites. A new picture each day. Favourites change the next time Kodi starts."
+msgid "Shows a picture from one of your games, with the folder's name over it, on RomM's menu. A new picture each day."
 msgstr ""
 
 # Settings: cache 30400-30499
