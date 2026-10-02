@@ -119,8 +119,8 @@ class Tiles(unittest.TestCase):
         with mock.patch.object(tiles, 'font_file', lambda: (None, False)), mock.patch.object(tiles, 'SHADOW', 0):
             tiles.render(shot.getvalue(), 'ROMs', dest)
         plain = Image.open(dest).convert('L')
-        halo = sum(im.getpixel((x, tiles.SIZE // 2)) for x in range(first - 12, first))
-        self.assertLess(halo, sum(plain.getpixel((x, tiles.SIZE // 2)) for x in range(first - 12, first)) * 0.6)
+        darkest = lambda i: min(i.getpixel((x, tiles.SIZE // 2)) for x in range(first - 20, first))
+        self.assertLess(darkest(im), darkest(plain) * 0.6)                                   # the halo beside the text
 
     @unittest.skipUnless(PIL, 'needs PIL')
     def test_one_text_size_fits_the_longest_name(self):
@@ -130,8 +130,8 @@ class Tiles(unittest.TestCase):
             size = tiles.text_size(['Search', 'Smart collections'])
             self.assertEqual(size, tiles.text_size(['collections']))           # wraps rather than shrinks
             face, stroke = tiles.font(size)
-            self.assertEqual(tiles.lines(draw, 'Smart collections', face, stroke), 'Smart\ncollections')
-            self.assertEqual(tiles.lines(draw, 'Search', face, stroke), 'Search')
+            self.assertEqual(tiles.lines(draw, 'Smart collections', face, stroke, tiles.fit(size)), 'Smart\ncollections')
+            self.assertEqual(tiles.lines(draw, 'Search', face, stroke, tiles.fit(size)), 'Search')
             self.assertLess(tiles.text_size(['Search', 'Supercalifragilistic']), tiles.text_size(['Search']))
 
     @unittest.skipUnless(PIL, 'needs PIL')
@@ -140,15 +140,22 @@ class Tiles(unittest.TestCase):
         with mock.patch.object(tiles, 'font_file', lambda: (None, False)):
             size = tiles.text_size(['Collections', 'Smart collections'])
             face, stroke = tiles.font(size)
-        mask = Image.new('L', (tiles.SIZE, tiles.SIZE))
-        draw = ImageDraw.Draw(mask)
-        text = tiles.lines(draw, 'Smart collections', face, stroke)
+        draw = ImageDraw.Draw(Image.new('L', (1, 1)))
+        text = tiles.lines(draw, 'Smart collections', face, stroke, tiles.fit(size))
         self.assertIn('\n', text)
-        draw.text((60, 100), text, font=face, fill=255, stroke_width=stroke, align='center')
+        mask = tiles.text_mask(text, face, stroke, size)
         glyphs = mask.getbbox()
-        halo = tiles.halo((60, 100), text, face, stroke, size).point(lambda v: 255 if v > 40 else 0).getbbox()
+        halo = tiles.halo(mask, size).point(lambda v: 255 if v > 40 else 0).getbbox()
         top, bottom = glyphs[1] - halo[1], halo[3] - glyphs[3]
         self.assertLessEqual(abs(top - bottom), 3)           # as far past the last line as the first
+
+    @unittest.skipUnless(PIL, 'needs PIL')
+    def test_names_drawn_past_the_fonts_hinting(self):
+        with mock.patch.object(tiles, 'font_file', lambda: (None, False)):
+            for size in (40, 72, 81, 102):
+                face, stroke = tiles.font(size)
+                self.assertGreater(face.size, 200, size)          # Estuary's Noto Sans is misdrawn up to 200 px
+                self.assertEqual(face.size, size * tiles.scale(size))
 
     def test_a_refresh_past_midnight_keeps_its_day(self):
         lib = Library(games=[game(i) for i in range(1, 30)])
