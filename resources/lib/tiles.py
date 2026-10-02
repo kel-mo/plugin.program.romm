@@ -128,11 +128,35 @@ def font_file():
     return None, False
 
 
-def render(data, label, dest):
+def font(size):
+    """The skin's font at this size, and the stroke that thickens a regular one."""
+    from PIL import ImageFont
+    file, bold = font_file()
+    return (ImageFont.truetype(file, size) if file else ImageFont.load_default(size)), (0 if bold else max(1, size // 24))
+
+
+def text_size(labels):
+    """One size for every tile, so the names match: the largest at which the longest fits 80 % of the width."""
+    try:
+        from PIL import Image, ImageDraw
+    except ImportError:
+        return SIZE // 5
+    draw = ImageDraw.Draw(Image.new('L', (1, 1)))
+    size = SIZE // 5
+    while size > 12:
+        face, stroke = font(size)
+        widest = max(draw.textbbox((0, 0), label, font=face, stroke_width=stroke)[2] for label in labels)
+        if widest <= SIZE * 0.8:
+            break
+        size = int(size * 0.9)
+    return size
+
+
+def render(data, label, dest, size=SIZE // 5):
     """A square crop, darkened, with the label centred; the plain picture when Kodi's Python lacks PIL."""
     tmp = dest + '.tmp'
     try:
-        from PIL import Image, ImageDraw, ImageEnhance, ImageFont, ImageOps
+        from PIL import Image, ImageDraw, ImageEnhance, ImageOps
     except ImportError:
         with open(tmp, 'wb') as f:
             f.write(data)
@@ -141,17 +165,10 @@ def render(data, label, dest):
     im = ImageOps.exif_transpose(Image.open(io.BytesIO(data))).convert('RGB')
     im = ImageEnhance.Brightness(ImageOps.fit(im, (SIZE, SIZE), Image.LANCZOS)).enhance(DIM)
     draw = ImageDraw.Draw(im)
-    file, bold = font_file()
-    size = SIZE // 5
-    while True:
-        font = ImageFont.truetype(file, size) if file else ImageFont.load_default(size)
-        stroke = 0 if bold else max(1, size // 24)          # a regular font drawn thicker
-        left, top, right, bottom = draw.textbbox((0, 0), label, font=font, stroke_width=stroke)
-        if right - left <= SIZE * 0.8 or size <= 12:
-            break
-        size = int(size * 0.9)
+    face, stroke = font(size)
+    left, top, right, bottom = draw.textbbox((0, 0), label, font=face, stroke_width=stroke)
     xy = ((SIZE - (right - left)) / 2 - left, (SIZE - (bottom - top)) / 2 - top)
-    draw.text(xy, label, font=font, fill=(255, 255, 255), stroke_width=stroke, stroke_fill=(255, 255, 255))
+    draw.text(xy, label, font=face, fill=(255, 255, 255), stroke_width=stroke, stroke_fill=(255, 255, 255))
     im.save(tmp, 'JPEG', quality=88)
     os.replace(tmp, dest)
 
@@ -179,7 +196,9 @@ def refresh(client, monitor):
     name = int(time.time())
     done, used = 0, set()
     # folders first, so Continue playing keeps the last game; the add-on's own tile takes what is left
-    for key, label in [(k, kodi.L(i)) for k, (i, _) in FOLDERS.items()] + [(ROOT, kodi.L(30037))]:   # favourites name the add-on beside it
+    labels = [(k, kodi.L(i)) for k, (i, _) in FOLDERS.items()] + [(ROOT, kodi.L(30037))]   # favourites name the add-on beside it
+    size = text_size([label for _, label in labels])
+    for key, label in labels:
         if monitor.abortRequested():
             return done
         rom = pick(client, key, day, used)
@@ -187,7 +206,7 @@ def refresh(client, monitor):
             continue
         used.add(rom['id'])
         try:
-            render(client.asset(picture(rom)), label, os.path.join(tile_dir(), '{}-{}.jpg'.format(key, name)))
+            render(client.asset(picture(rom)), label, os.path.join(tile_dir(), '{}-{}.jpg'.format(key, name)), size)
             done += 1
         except (ApiError, OSError, ValueError) as e:        # PIL raises OSError for unreadable images
             kodi.debug('tile {}: {}'.format(key, e))

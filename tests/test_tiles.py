@@ -116,6 +116,17 @@ class Tiles(unittest.TestCase):
         self.assertEqual(im.crop((128, 216, 384, 296)).getextrema()[1], 255)    # white text in the middle
         self.assertLess(im.crop((0, 0, 64, 64)).getextrema()[1], 160)          # darkened picture at the corner
 
+    @unittest.skipUnless(PIL, 'needs PIL')
+    def test_one_text_size_fits_the_longest_name(self):
+        from PIL import Image, ImageDraw
+        with mock.patch.object(tiles, 'font_file', lambda: (None, False)):
+            size = tiles.text_size(['Search', 'Smart collections'])
+            face, stroke = tiles.font(size)
+            self.assertLess(size, tiles.text_size(['Search']))
+        draw = ImageDraw.Draw(Image.new('L', (1, 1)))
+        self.assertLessEqual(draw.textbbox((0, 0), 'Smart collections', font=face, stroke_width=stroke)[2],
+                             tiles.SIZE * 0.8)
+
     def test_skin_bold_font_first(self):
         skin = tempfile.mkdtemp()
         self.addCleanup(shutil.rmtree, skin)
@@ -139,7 +150,7 @@ class Tiles(unittest.TestCase):
             calls.append(method)
             return {'textures': [{'textureid': 7}]} if method == 'Textures.GetTextures' else {}
         lib = Library(games=[game(i) for i in range(4, 30)], played=[game(3)], favourites=[game(3)])
-        with mock.patch.object(tiles, 'render', lambda data, label, dest: open(dest, 'wb').close()), \
+        with mock.patch.object(tiles, 'render', lambda data, label, dest, size: open(dest, 'wb').close()), \
                 mock.patch.object(kodi, 'jsonrpc', rpc):
             self.assertTrue(tiles.due())
             self.assertEqual(tiles.refresh(lib, xbmc.Monitor()), len(tiles.FOLDERS) + 1)
