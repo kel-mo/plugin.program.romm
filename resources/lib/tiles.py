@@ -201,6 +201,9 @@ def refresh(client, monitor):
     done, used = 0, set()
     # folders first, so Continue playing keeps the last game; the add-on's own tile takes what is left
     labels = [(k, kodi.L(i)) for k, (i, _) in FOLDERS.items()] + [(ROOT, kodi.L(30037))]   # favourites name the add-on beside it
+    if not all(label for _, label in labels):           # Kodi has this version's strings only after a restart
+        kodi.debug('tiles: names not loaded yet')
+        return 0
     size = text_size([label for _, label in labels])
     for key, label in labels:
         if monitor.abortRequested():

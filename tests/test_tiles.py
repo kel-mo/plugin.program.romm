@@ -165,6 +165,15 @@ class Tiles(unittest.TestCase):
         self.assertIn('/3/', lib.fetched[list(tiles.FOLDERS).index('last_played')])   # folders pick first
         self.assertEqual(calls, ['Textures.GetTextures', 'Textures.RemoveTexture'])
 
+    def test_waits_for_the_names(self):
+        lib = Library(games=[game(i) for i in range(1, 30)])
+        real = kodi.L
+        with mock.patch.object(kodi, 'L', lambda i, *a: '' if i == 30037 else real(i, *a)), \
+                mock.patch.object(tiles, 'render', lambda *a: self.fail('drew without a name')):
+            self.assertEqual(tiles.refresh(lib, xbmc.Monitor()), 0)
+        self.assertEqual(lib.fetched, [])
+        self.assertTrue(tiles.due())
+
     def test_off_draws_nothing(self):
         xbmcaddon.SETTINGS['tiles'] = 'false'
         self.assertFalse(tiles.due())
