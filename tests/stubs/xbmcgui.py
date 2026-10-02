@@ -26,12 +26,6 @@ class DialogProgress:
     def update(self, *a): pass
     def iscanceled(self): return False
     def close(self): pass
-class Window:
-    PROPS = {}
-    def __init__(self, i=0): pass
-    def getProperty(self, k): return Window.PROPS.get(k, '')
-    def setProperty(self, k, v): Window.PROPS[k] = v
-    def clearProperty(self, k): Window.PROPS.pop(k, None)
 class WindowDialog:
     def __init__(self, *a, **k): pass
 class ControlImage:
