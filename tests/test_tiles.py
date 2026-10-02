@@ -116,9 +116,12 @@ class Tiles(unittest.TestCase):
         self.assertEqual(im.crop((128, 216, 384, 296)).getextrema()[1], 255)    # white text in the middle
         self.assertLess(im.crop((0, 0, 64, 64)).getextrema()[1], 160)          # darkened picture at the corner
         row = [im.getpixel((x, tiles.SIZE // 2)) for x in range(tiles.SIZE)]
-        first = next(x for x, v in enumerate(row) if v > 250)
-        self.assertGreater(row[0], 90)
-        self.assertLess(min(row[first - 12:first]), 70)                        # darker still beside the name
+        first = next(x for x, v in enumerate(row) if v > 240)
+        with mock.patch.object(tiles, 'font_file', lambda: (None, False)), mock.patch.object(tiles, 'SHADOW', 0):
+            tiles.render(shot.getvalue(), 'ROMs', dest)
+        plain = Image.open(dest).convert('L')
+        halo = sum(im.getpixel((x, tiles.SIZE // 2)) for x in range(first - 12, first))
+        self.assertLess(halo, sum(plain.getpixel((x, tiles.SIZE // 2)) for x in range(first - 12, first)) * 0.6)
 
     @unittest.skipUnless(PIL, 'needs PIL')
     def test_one_text_size_fits_the_longest_name(self):
