@@ -115,6 +115,10 @@ def run():
     drawer = threading.Thread(target=draw_tiles, daemon=True)
     drawer.start()
     kodi.log('service started')
+    try:
+        tiles.repair_favourites(monitor)
+    except Exception:
+        kodi.log('favourites not repaired: {}'.format(traceback.format_exc()), xbmc.LOGWARNING)
     while not monitor.waitForAbort(1):
         try:
             step(player, tracker)
