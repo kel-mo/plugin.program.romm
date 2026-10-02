@@ -9,7 +9,7 @@ import xbmc
 import xbmcgui
 import xbmcplugin
 
-from . import auth, cache, cores, device, icons, kodi, launch, props
+from . import auth, cache, cores, device, icons, kodi, launch, props, tiles
 from .api import ApiError, AuthError, RommClient
 
 BASE = 'plugin://{}/'.format(kodi.ADDON_ID)
@@ -60,16 +60,16 @@ def root():
         xbmcplugin.addDirectoryItem(HANDLE, url_for('settings'), li, isFolder=False)
         end()
         return
-    folder(kodi.L(30000), 'platforms', kodi.ICON)
-    folder(kodi.L(30001), 'collections', kodi.ICON)
-    folder(kodi.L(30009), 'smart_collections', kodi.ICON)
-    folder(kodi.L(30002), 'roms', kodi.ICON, last_played='true', order_by='last_played')
-    folder(kodi.L(30003), 'roms', kodi.ICON, favorite='true')
-    folder(kodi.L(30023), 'roms', kodi.ICON, statuses='backlogged')
-    folder(kodi.L(30030), 'browse', kodi.ICON)
-    folder(kodi.L(30004), 'search', kodi.ICON)
+    folder(kodi.L(30000), 'platforms', tiles.art('platforms'))
+    folder(kodi.L(30001), 'collections', tiles.art('collections'))
+    folder(kodi.L(30009), 'smart_collections', tiles.art('smart_collections'))
+    folder(kodi.L(30002), 'roms', tiles.art('last_played'), last_played='true', order_by='last_played')
+    folder(kodi.L(30003), 'roms', tiles.art('favourites'), favorite='true')
+    folder(kodi.L(30023), 'roms', tiles.art('backlog'), statuses='backlogged')
+    folder(kodi.L(30030), 'browse', tiles.art('browse'))
+    folder(kodi.L(30004), 'search', tiles.art('search'))
     li = xbmcgui.ListItem(kodi.L(30008), offscreen=True)
-    li.setArt({'icon': kodi.ICON})
+    li.setArt({'icon': tiles.art('random'), 'thumb': tiles.art('random')})
     xbmcplugin.addDirectoryItem(HANDLE, url_for('random'), li, isFolder=False)
     end()
 

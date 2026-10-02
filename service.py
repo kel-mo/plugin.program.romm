@@ -1,14 +1,19 @@
 # -*- coding: utf-8 -*-
 """Background service: tracks RetroPlayer playback of cached games for play sessions and
-save sync. Registered in addon.xml as xbmc.service."""
+save sync, and draws the tiles each day. Registered in addon.xml as xbmc.service."""
+import threading
 import traceback
 from collections import deque
 
 import xbmc
 
-from resources.lib import auth, cache, device, kodi
+from resources.lib import auth, cache, device, kodi, tiles
 from resources.lib.api import ApiError, RommClient
 from resources.lib.sessions import SERVICE_TIMEOUT, PlayTracker
+
+TILE_START = 30                          # seconds after start before drawing tiles, so Kodi settles first
+TILE_CHECK = 60                          # seconds between checks for a new day or the setting turned on
+TILE_RETRY = 900                         # seconds to wait after the server gave no pictures
 
 
 class GamePlayer(xbmc.Player):
@@ -87,10 +92,28 @@ def step(player, tracker):
     tracker.tick()
 
 
+def draw_tiles():
+    """On its own thread, so slow fetches never hold up play tracking or save sync."""
+    monitor = xbmc.Monitor()
+    wait = TILE_START
+    while not monitor.waitForAbort(wait):
+        wait = TILE_CHECK
+        url, token = kodi.fresh_setting('server_url'), kodi.fresh_setting('token')
+        if url and token and tiles.due():
+            try:
+                if not tiles.refresh(RommClient(url, token, timeout=SERVICE_TIMEOUT), monitor):
+                    wait = TILE_RETRY
+            except Exception:                       # never take the service down with it
+                kodi.log('tiles failed: {}'.format(traceback.format_exc()), xbmc.LOGWARNING)
+                wait = TILE_RETRY
+
+
 def run():
     monitor = xbmc.Monitor()
     player = GamePlayer()
     tracker = PlayTracker()
+    drawer = threading.Thread(target=draw_tiles, daemon=True)
+    drawer.start()
     kodi.log('service started')
     while not monitor.waitForAbort(1):
         try:
@@ -103,6 +126,11 @@ def run():
         tracker.stop(network=False)
     except Exception:
         kodi.log(traceback.format_exc(), xbmc.LOGERROR)
+    try:
+        tiles.point_favourites()
+    except Exception:
+        kodi.log(traceback.format_exc(), xbmc.LOGERROR)
+    drawer.join(SERVICE_TIMEOUT)
 
 
 if __name__ == '__main__':

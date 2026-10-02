@@ -320,6 +320,10 @@ class RommClient:
             return self.base_url + path
         return '{}/assets/romm/resources/{}'.format(self.base_url, path)
 
+    def asset(self, path):
+        """A cover's or screenshot's bytes, from a server path."""
+        return self.request('GET', quote(path, safe='/:?=&%+,@'), raw=True)
+
     def download(self, url, dest, expected_size=None, progress=None):
         """Stream url to dest with resume support. progress(done, total) -> False cancels."""
         if aborting():
