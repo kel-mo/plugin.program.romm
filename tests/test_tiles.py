@@ -135,6 +135,22 @@ class Tiles(unittest.TestCase):
             self.assertEqual(tiles.lines(draw, 'Search', face, stroke), 'Search')
             self.assertLess(tiles.text_size(['Search', 'Supercalifragilistic']), tiles.text_size(['Search']))
 
+    @unittest.skipUnless(PIL, 'needs PIL')
+    def test_halo_sits_on_wrapped_lines(self):
+        from PIL import Image, ImageDraw
+        with mock.patch.object(tiles, 'font_file', lambda: (None, False)):
+            size = tiles.text_size(['Collections', 'Smart collections'])
+            face, stroke = tiles.font(size)
+        mask = Image.new('L', (tiles.SIZE, tiles.SIZE))
+        draw = ImageDraw.Draw(mask)
+        text = tiles.lines(draw, 'Smart collections', face, stroke)
+        self.assertIn('\n', text)
+        draw.text((60, 100), text, font=face, fill=255, stroke_width=stroke, align='center')
+        glyphs = mask.getbbox()
+        halo = tiles.halo((60, 100), text, face, stroke, size).point(lambda v: 255 if v > 40 else 0).getbbox()
+        top, bottom = glyphs[1] - halo[1], halo[3] - glyphs[3]
+        self.assertLessEqual(abs(top - bottom), 3)           # as far past the last line as the first
+
     def test_skin_bold_font_first(self):
         skin = tempfile.mkdtemp()
         self.addCleanup(shutil.rmtree, skin)
