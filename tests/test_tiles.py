@@ -177,6 +177,17 @@ class Tiles(unittest.TestCase):
         self.assertEqual(lib.fetched, [])
         self.assertTrue(tiles.due())
 
+    def test_update_redraws_the_same_day(self):
+        kodi.ensure_dir(tiles.tile_dir())
+        with open(tiles.stamp(), 'w') as f:
+            f.write(tiles.drawing())
+        self.assertFalse(tiles.due())
+        with mock.patch.object(kodi, 'ADDON_VERSION', '9.9.9'):
+            self.assertTrue(tiles.due())
+        with open(tiles.stamp(), 'w') as f:
+            f.write(tiles.date.today().isoformat())                       # as 0.2.6 wrote it
+        self.assertTrue(tiles.due())
+
     def test_off_draws_nothing(self):
         xbmcaddon.SETTINGS['tiles'] = 'false'
         self.assertFalse(tiles.due())
