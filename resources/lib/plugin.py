@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """plugin:// router and directory listings."""
+import hashlib
 import json
 import os
 import traceback
@@ -9,13 +10,16 @@ import xbmc
 import xbmcgui
 import xbmcplugin
 
-from . import auth, cache, cores, device, icons, kodi, launch, props, tiles
+from . import auth, backdrop, cache, cores, device, icons, kodi, launch, props, tiles
 from .api import ApiError, AuthError, RommClient
 
 BASE = 'plugin://{}/'.format(kodi.ADDON_ID)
 HANDLE = -1
 SORTS = [('name', 30305), ('first_release_date', 30306), ('average_rating', 30307),
          ('created_at', 30308), ('last_played', 30309)]
+BACKDROPS = 10                           # screenshots composed per listing; the rest show plain until a later visit
+KEEP = 500                               # composed backdrops kept; the least recently listed go
+_budget = BACKDROPS
 RUN_ACTIONS = {'download', 'random', 'details', 'versions', 'sync_now', 'favourite', 'backlog', 'status', 'hide'}
 
 
@@ -131,6 +135,42 @@ def browse(client, kind=None):
     end()
 
 
+def fanart(client, rom):
+    """The first screenshot composed to fit the screen, kept in the profile; the plain one until it has been made."""
+    global _budget
+    shots = rom.get('merged_screenshots') or []
+    if not shots:
+        return None
+    path = kodi.profile_file(os.path.join('backdrops', hashlib.sha1(shots[0].encode()).hexdigest()[:20] + '.jpg'))
+    if os.path.exists(path):
+        os.utime(path)                                  # listed again: kept longest
+        return path
+    if _budget <= 0:
+        return client.asset_url(shots[0])
+    _budget -= 1
+    try:
+        data = client.asset(shots[0])
+        made = backdrop.compose(data, pixel=True)
+        if made is data:                                # no PIL: nothing to keep
+            return client.asset_url(shots[0])
+        kodi.ensure_dir(os.path.dirname(path))
+        with open(path + '.tmp', 'wb') as f:
+            f.write(made)
+        os.replace(path + '.tmp', path)
+    except (ApiError, OSError, ValueError) as e:        # PIL raises OSError for unreadable pictures
+        kodi.debug('backdrop for {}: {}'.format(rom.get('name'), e))
+        return client.asset_url(shots[0])
+    tidy_backdrops()
+    return path
+
+
+def tidy_backdrops():
+    folder = kodi.profile_file('backdrops')
+    files = sorted((os.path.join(folder, n) for n in os.listdir(folder) if n.endswith('.jpg')), key=os.path.getmtime)
+    for old in files[:-KEEP]:
+        os.remove(old)
+
+
 def rom_item(client, rom, installed, choices, cached_ids, favourite_ids=None, sortable=True, available=None):
     name = rom.get('name') or rom.get('fs_name_no_tags') or rom.get('fs_name')
     li = xbmcgui.ListItem(name, offscreen=True)
@@ -140,8 +180,9 @@ def rom_item(client, rom, installed, choices, cached_ids, favourite_ids=None, so
     if cover:
         art.update(thumb=cover, poster=cover, icon=cover)
     shots = rom.get('merged_screenshots') or []
-    if shots:
-        art['fanart'] = client.asset_url(shots[0])
+    back = fanart(client, rom)
+    if back:
+        art['fanart'] = back
     if art:
         li.setArt(art)
     cached = rom['id'] in cached_ids
