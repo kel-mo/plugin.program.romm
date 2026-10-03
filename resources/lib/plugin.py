@@ -37,8 +37,8 @@ def fail(action):
         end(False)
 
 
-def folder(label, action, icon=None, art=None, context=None, **params):
-    li = xbmcgui.ListItem(label, offscreen=True)
+def folder(label, action, icon=None, art=None, context=None, label2='', **params):
+    li = xbmcgui.ListItem(label, label2, offscreen=True)
     art = dict(art or {})
     if icon:
         art.setdefault('icon', icon)
@@ -175,14 +175,19 @@ def rom_item(client, rom, installed, choices, cached_ids, favourite_ids=None, so
     xbmcplugin.addDirectoryItem(HANDLE, url_for('play', rom_id=rom['id']), li, isFolder=False)
 
 
-def roms(client, params):
-    offset = int(params.get('offset') or 0)
-    limit = kodi.setting_int('page_size') or 100
+def rom_filters(params):
     filters = {k: params[k] for k in ('platform_id', 'collection_id', 'smart_collection_id',
                                       'search_term', 'favorite', 'last_played', 'statuses', 'genres',
                                       'regions') if params.get(k)}
     if 'platform_id' in filters:
         filters['platform_ids'] = filters.pop('platform_id')
+    return filters
+
+
+def roms(client, params):
+    offset = int(params.get('offset') or 0)
+    limit = kodi.setting_int('page_size') or 100
+    filters = rom_filters(params)
     filters['order_by'] = params.get('order_by') or kodi.setting('sort_by') or 'name'
     filters['order_dir'] = 'asc' if filters['order_by'] == 'name' else 'desc'
     items, total = client.roms(offset=offset, limit=limit, **filters)
@@ -194,6 +199,8 @@ def roms(client, params):
     xbmcplugin.setContent(HANDLE, 'games')
     if params.get('name'):
         xbmcplugin.setPluginCategory(HANDLE, params['name'])
+    if filters['order_by'] == 'name' and (total or 0) > limit:          # a long list by name: skip to an initial
+        folder(kodi.L(30037), 'letters', **{k: v for k, v in params.items() if k not in ('action', 'offset')})
     fanart.queue(items)
     for rom in items:
         rom_item(client, rom, installed, choices, cached_ids, favourite_ids, not params.get('order_by'), available)
@@ -205,6 +212,18 @@ def roms(client, params):
         kodi.notify(kodi.L(30625))
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_NONE)
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    end()
+
+
+def letters(client, params):
+    """The initials of a list sorted by name, each opening the page that starts there."""
+    index, total = client.letters(**rom_filters(params))
+    starts = sorted(index.items(), key=lambda kv: kv[1])
+    if params.get('name'):
+        xbmcplugin.setPluginCategory(HANDLE, params['name'])
+    for (letter, start), following in zip(starts, [s for _, s in starts[1:]] + [total]):
+        label = '0-9' if letter == '0' else letter.upper()
+        folder(label, 'roms', label2=str(following - start), **dict({k: v for k, v in params.items() if k != 'action'}, offset=start))
     end()
 
 
@@ -368,6 +387,8 @@ def dispatch(action, params):
         collections(client, smart=True)
     elif action == 'roms':
         roms(client, params)
+    elif action == 'letters':
+        letters(client, params)
     elif action == 'browse':
         browse(client, params.get('kind'))
     elif action == 'search':
