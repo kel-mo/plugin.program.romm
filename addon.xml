@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.program.romm" name="RomM" version="0.3.3" provider-name="kel-mo">
   <requires>
-    <import addon="xbmc.python" version="3.0.1"/>
+    <import addon="xbmc.python" version="3.1.0"/>
     <import addon="script.module.pyqrcode" version="1.2.1"/>
   </requires>
   <extension point="xbmc.python.pluginsource" library="default.py">
@@ -10,7 +10,7 @@
   <extension point="xbmc.service" library="service.py"/>
   <extension point="xbmc.addon.metadata">
     <summary lang="en_GB">Play your RomM library with Kodi's built-in emulators</summary>
-    <description lang="en_GB">Browse the ROM library of a self-hosted RomM server, download games and BIOS files on demand, and play them in Kodi's RetroPlayer using the installed libretro game add-ons.</description>
+    <description lang="en_GB">Browse the ROM library of a self-hosted RomM server, download games and BIOS files on demand, and play them in Kodi's RetroPlayer using the installed libretro game add-ons. Menu tiles and game backgrounds need Pillow in Kodi's Python; without it the plain pictures are shown.</description>
     <disclaimer lang="en_GB">Requires a RomM server (5.0 or newer) that you own or have an account on. Not affiliated with the RomM project.</disclaimer>
     <platform>all</platform>
     <license>GPL-2.0-or-later</license>
@@ -47,6 +47,7 @@ v0.2.5
 - File names from the server stay inside the download folder</news>
     <assets>
       <icon>resources/icon.png</icon>
+      <fanart>resources/fanart.jpg</fanart>
     </assets>
   </extension>
 </addon>
