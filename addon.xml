@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.program.romm" name="RomM" version="0.2.11" provider-name="kel-mo">
+<addon id="plugin.program.romm" name="RomM" version="0.3.0" provider-name="kel-mo">
   <requires>
     <import addon="xbmc.python" version="3.0.1"/>
     <import addon="script.module.pyqrcode" version="1.2.1"/>
@@ -16,7 +16,9 @@
     <license>GPL-2.0-or-later</license>
     <source>https://github.com/kel-mo/plugin.program.romm</source>
     <website>https://romm.app</website>
-    <news>v0.2.11
+    <news>v0.3.0
+- Game backgrounds show the whole screenshot, sharp, on a blurred copy of itself, instead of a crop
+v0.2.11
 - Tile names are drawn properly with the Estuary skin's font
 v0.2.10
 - Favourites that showed a tile go back to the RomM icon by themselves, keeping their place
@@ -43,12 +45,7 @@ v0.2.3
 - Offers to install a missing emulator, then starts the game
 - Install emulator: add more emulators for a platform from the context menu
 - More emulators and platforms, including the LibreELEC repository cores
-- Download folder limit is now a share of free disk space
-v0.2.2
-- PlayStation 2 games play with the LRPS2 core
-- Clearer message when the add-on has no emulator for a platform
-v0.2.1
-- New add-on icon</news>
+- Download folder limit is now a share of free disk space</news>
     <assets>
       <icon>resources/icon.png</icon>
     </assets>
