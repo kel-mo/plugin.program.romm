@@ -44,6 +44,19 @@ class Compose(unittest.TestCase):
         self.assertLess(sum(edge.tobytes()) / (300 * 1080), 100)              # the copy beside it is dimmed
         self.assertGreater(edge.getextrema()[0], 0)
 
+    def test_console_screenshot_stretched_to_four_by_three(self):
+        from PIL import Image
+        out = Image.open(io.BytesIO(backdrop.compose(picture(256, 224), pixel=True, aspect=4 / 3)))
+        self.assertEqual(out.size, backdrop.CANVAS)
+        x, y = (1920 - 1195) // 2, (1080 - 896) // 2                        # 4x tall, 4:3 wide
+        self.assertTrue(close(out.getpixel((x + 12, y + 12)), (20, 220, 20)))
+        self.assertTrue(close(out.getpixel((x + 1195 - 12, y + 896 - 12)), (200, 60, 60)))
+        self.assertLess(max(out.getpixel((x - 12, 540))), 120)                 # the blurred copy beside it
+        row = [out.getpixel((x + i, y + 12)) for i in range(0, 1195)]
+        self.assertTrue(close(row[597 - 12], (20, 220, 20)) and close(row[597 + 12], (200, 60, 60)))   # the edge, mid-way
+        tall = Image.open(io.BytesIO(backdrop.compose(picture(224, 256), pixel=True, aspect=4 / 3)))
+        self.assertTrue(close(tall.getpixel(((1920 - 896) // 2 + 12, 28 + 12)), (20, 220, 20)))      # upright: 4x, not widened
+
     def test_big_screenshot_shrinks_to_fit(self):
         from PIL import Image
         out = Image.open(io.BytesIO(backdrop.compose(picture(4000, 3000), pixel=True)))
@@ -54,6 +67,23 @@ class Compose(unittest.TestCase):
         data = picture(1920, 1080)
         self.assertIs(backdrop.compose(data, pixel=True), data)
         self.assertIsNot(backdrop.compose(picture(640, 360), pixel=True), picture(640, 360))   # small: scaled up sharp
+
+    def test_crt_look_darkens_the_line_between_rows(self):
+        from PIL import Image
+        plain = Image.open(io.BytesIO(backdrop.compose(picture(320, 240), pixel=True)))
+        crt = Image.open(io.BytesIO(backdrop.compose(picture(320, 240), pixel=True, look='crt')))
+        lines = Image.open(io.BytesIO(backdrop.compose(picture(320, 240), pixel=True, look='scanlines')))
+        self.assertEqual(crt.size, backdrop.CANVAS)
+        x, y = (1920 - 1280) // 2 + 400, (1080 - 960) // 2 + 600                # inside the red half, 4 px rows
+        for out in (crt, lines):
+            body = sum(out.getpixel((x + i, y + 1))[0] for i in range(12)) / 12
+            foot = sum(out.getpixel((x + i, y + 3))[0] for i in range(12)) / 12
+            self.assertLess(foot, body * 0.8)                                  # the last of each row's 4 lines is dark
+        self.assertGreater(abs(crt.getpixel((x, y + 1))[1] - crt.getpixel((x + 1, y + 1))[1]), 10)   # phosphor stripes
+        self.assertLess(abs(lines.getpixel((x, y + 1))[1] - lines.getpixel((x + 1, y + 1))[1]), 4)  # none on scanlines
+        self.assertEqual(plain.getpixel((x, y + 3)), plain.getpixel((x, y + 1)))
+        self.assertEqual(backdrop.compose(picture(320, 240), pixel=True, look='nonsense'),
+                         backdrop.compose(picture(320, 240), pixel=True))                 # unknown: plain
 
     def test_tall_photo_sits_whole_on_a_blurred_copy(self):
         from PIL import Image
@@ -75,7 +105,7 @@ class Shots:
         self.fetched.append(path)
         if self.fail:
             raise ApiError('down')
-        return picture(320, 240)
+        return picture(256, 224)
 
     def asset_url(self, path):
         return 'https://romm' + path
@@ -86,13 +116,14 @@ class Fanart(unittest.TestCase):
     def setUp(self):
         shutil.rmtree(kodi.profile_file('backdrops'), ignore_errors=True)
         self.addCleanup(shutil.rmtree, kodi.profile_file('backdrops'), True)
-        plugin._budget = plugin.BACKDROPS
 
     def rom(self, n):
-        return {'id': n, 'name': 'Game {}'.format(n), 'merged_screenshots': ['/assets/romm/resources/roms/1/{}/screenshots/0.jpg'.format(n)]}
+        return {'id': n, 'name': 'Game {}'.format(n), 'platform_slug': 'snes',
+                'merged_screenshots': ['/assets/romm/resources/roms/1/{}/screenshots/0.jpg'.format(n)]}
 
     def test_made_once_and_kept(self):
         client = Shots()
+        plugin.make_backdrops(client, [self.rom(1), self.rom(1)])
         path = plugin.fanart(client, self.rom(1))
         self.assertTrue(path.startswith(kodi.profile_file('backdrops')) and os.path.exists(path))
         self.assertFalse(os.path.exists(path + '.tmp'))
@@ -100,25 +131,56 @@ class Fanart(unittest.TestCase):
         self.assertEqual(len(client.fetched), 1)
         self.assertIsNone(plugin.fanart(client, {'id': 2}))
 
-    def test_a_listing_makes_a_few_and_leaves_the_rest_plain(self):
+    def test_a_listing_makes_a_pageful_at_once(self):
         client = Shots()
-        made = [plugin.fanart(client, self.rom(n)) for n in range(plugin.BACKDROPS + 3)]
-        self.assertEqual(sum(1 for p in made if p.startswith('https://romm')), 3)
-        self.assertEqual(len(client.fetched), plugin.BACKDROPS)
-        plugin._budget = plugin.BACKDROPS                                      # the next listing
-        self.assertTrue(plugin.fanart(client, self.rom(plugin.BACKDROPS + 1)).endswith('.jpg'))
+        roms = [self.rom(n) for n in range(5)]
+        with mock.patch.object(plugin, 'BACKDROPS', 3):
+            plugin.make_backdrops(client, roms)
+        made = [plugin.fanart(client, r) for r in roms]
+        self.assertEqual(sum(1 for p in made if p.startswith('https://romm')), 2)   # beyond the cap: plain for now
+        self.assertEqual(len(client.fetched), 3)
+        plugin.make_backdrops(client, roms)                                     # the next visit does the rest
+        self.assertEqual(len(client.fetched), 5)
+        self.assertTrue(all(plugin.fanart(client, r).endswith('.jpg') for r in roms))
+
+    def test_consoles_stretch_and_handhelds_keep_their_pixels(self):
+        from PIL import Image
+        client = Shots()
+        self.enterContext(mock.patch.object(plugin, 'look', lambda: 'plain'))
+        gb = dict(self.rom(2), platform_slug='gb')
+        plugin.make_backdrops(client, [self.rom(1), gb])
+        snes = Image.open(plugin.fanart(client, self.rom(1)))
+        self.assertTrue(close(snes.getpixel((362 + 12, 92 + 12)), (20, 220, 20)))      # 4:3: 1195 wide
+        self.assertLess(max(snes.getpixel((362 - 12, 540))), 120)                       # the blurred copy beside it
+        hand = Image.open(plugin.fanart(client, gb))
+        self.assertTrue(close(hand.getpixel((448 + 12, 92 + 12)), (20, 220, 20)))      # 4x: 1024 wide, as drawn
+        self.assertLess(max(hand.getpixel((448 - 12, 540))), 120)
+
+    def test_each_look_has_its_own_file(self):
+        client = Shots()
+        with mock.patch.object(plugin, 'look', lambda: 'crt'):
+            plugin.make_backdrops(client, [self.rom(1)])
+            crt = plugin.fanart(client, self.rom(1))
+        with mock.patch.object(plugin, 'look', lambda: 'plain'):
+            self.assertTrue(plugin.fanart(client, self.rom(1)).startswith('https://romm'))   # not made for this look yet
+            plugin.make_backdrops(client, [self.rom(1)])
+            plain = plugin.fanart(client, self.rom(1))
+        self.assertNotEqual(crt, plain)
+        self.assertEqual(len(client.fetched), 2)
 
     def test_server_down_shows_the_plain_screenshot(self):
-        self.assertTrue(plugin.fanart(Shots(fail=True), self.rom(1)).startswith('https://romm'))
+        client = Shots(fail=True)
+        plugin.make_backdrops(client, [self.rom(1)])
+        self.assertTrue(plugin.fanart(client, self.rom(1)).startswith('https://romm'))
         self.assertFalse(os.path.exists(kodi.profile_file('backdrops')))
 
     def test_least_recently_listed_go_first(self):
         client = Shots()
         with mock.patch.object(plugin, 'KEEP', 2):
+            plugin.make_backdrops(client, [self.rom(1)])
             first = plugin.fanart(client, self.rom(1))
             os.utime(first, (1, 1))
-            plugin.fanart(client, self.rom(2))
-            plugin.fanart(client, self.rom(3))
+            plugin.make_backdrops(client, [self.rom(2), self.rom(3)])
         self.assertFalse(os.path.exists(first))
         self.assertEqual(len(os.listdir(kodi.profile_file('backdrops'))), 2)
 
