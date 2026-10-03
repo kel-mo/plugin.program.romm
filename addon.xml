@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.program.romm" name="RomM" version="0.3.0" provider-name="kel-mo">
+<addon id="plugin.program.romm" name="RomM" version="0.3.1" provider-name="kel-mo">
   <requires>
     <import addon="xbmc.python" version="3.0.1"/>
     <import addon="script.module.pyqrcode" version="1.2.1"/>
@@ -16,7 +16,10 @@
     <license>GPL-2.0-or-later</license>
     <source>https://github.com/kel-mo/plugin.program.romm</source>
     <website>https://romm.app</website>
-    <news>v0.3.0
+    <news>v0.3.1
+- Game backgrounds get a CRT look, with scanlines and plain as choices (Screenshot look, under Library)
+- A whole page's backgrounds are made at once, and console screenshots are shown 4:3 as on a TV
+v0.3.0
 - Game backgrounds show the whole screenshot, sharp, on a blurred copy of itself, instead of a crop
 v0.2.11
 - Tile names are drawn properly with the Estuary skin's font
@@ -40,12 +43,7 @@ v0.2.5
 - File names from the server stay inside the download folder
 v0.2.4
 - Say when an emulator could not be enabled
-- Hiding platforms without an emulator keeps those Kodi can install one for
-v0.2.3
-- Offers to install a missing emulator, then starts the game
-- Install emulator: add more emulators for a platform from the context menu
-- More emulators and platforms, including the LibreELEC repository cores
-- Download folder limit is now a share of free disk space</news>
+- Hiding platforms without an emulator keeps those Kodi can install one for</news>
     <assets>
       <icon>resources/icon.png</icon>
     </assets>
