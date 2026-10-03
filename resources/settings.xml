@@ -140,6 +140,20 @@
           <default>true</default>
           <control type="toggle"/>
         </setting>
+        <setting id="backdrop_look" type="string" label="30312" help="30313">
+          <level>0</level>
+          <default>crt</default>
+          <constraints>
+            <options>
+              <option label="30314">plain</option>
+              <option label="30315">scanlines</option>
+              <option label="30316">crt</option>
+            </options>
+          </constraints>
+          <control type="list" format="string">
+            <heading>30312</heading>
+          </control>
+        </setting>
       </group>
     </category>
     <category id="sync" label="30700" help="">

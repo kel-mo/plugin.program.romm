@@ -284,6 +284,26 @@ msgctxt "#30311"
 msgid "Shows a picture from one of your games, with the folder's name over it, on RomM's menu. A new picture each day."
 msgstr ""
 
+msgctxt "#30312"
+msgid "Screenshot look"
+msgstr ""
+
+msgctxt "#30313"
+msgid "How a game's screenshot looks behind the list: as it is, with the lines of a tube television, or with its lines, phosphor stripes and glow."
+msgstr ""
+
+msgctxt "#30314"
+msgid "Plain"
+msgstr ""
+
+msgctxt "#30315"
+msgid "Scanlines"
+msgstr ""
+
+msgctxt "#30316"
+msgid "CRT"
+msgstr ""
+
 # Settings: cache 30400-30499
 
 msgctxt "#30400"
