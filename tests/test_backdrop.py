@@ -6,8 +6,9 @@ import unittest
 from unittest import mock
 
 import support  # noqa: F401  (test paths)
+import xbmc
 
-from resources.lib import backdrop, kodi, plugin
+from resources.lib import backdrop, fanart
 from resources.lib.api import ApiError
 
 try:
@@ -114,75 +115,91 @@ class Shots:
 @unittest.skipUnless(PIL, 'needs PIL')
 class Fanart(unittest.TestCase):
     def setUp(self):
-        shutil.rmtree(kodi.profile_file('backdrops'), ignore_errors=True)
-        self.addCleanup(shutil.rmtree, kodi.profile_file('backdrops'), True)
+        shutil.rmtree(fanart.folder(), ignore_errors=True)
+        self.addCleanup(shutil.rmtree, fanart.folder(), True)
+        del xbmc.BUILTINS[:]
+        xbmc.INFOLABELS.clear()
 
-    def rom(self, n):
-        return {'id': n, 'name': 'Game {}'.format(n), 'platform_slug': 'snes',
+    def rom(self, n, slug='snes'):
+        return {'id': n, 'name': 'Game {}'.format(n), 'platform_slug': slug,
                 'merged_screenshots': ['/assets/romm/resources/roms/1/{}/screenshots/0.jpg'.format(n)]}
 
-    def test_made_once_and_kept(self):
+    def test_listing_queues_and_the_service_makes(self):
         client = Shots()
-        plugin.make_backdrops(client, [self.rom(1), self.rom(1)])
-        path = plugin.fanart(client, self.rom(1))
-        self.assertTrue(path.startswith(kodi.profile_file('backdrops')) and os.path.exists(path))
-        self.assertFalse(os.path.exists(path + '.tmp'))
-        self.assertEqual(plugin.fanart(client, self.rom(1)), path)
-        self.assertEqual(len(client.fetched), 1)
-        self.assertIsNone(plugin.fanart(client, {'id': 2}))
+        roms = [self.rom(1), self.rom(2), {'id': 3}]
+        self.assertEqual(fanart.queue(roms), 2)
+        self.assertEqual(fanart.queue(roms), 2)                                   # queued once
+        self.assertEqual(len(os.listdir(fanart.queue_dir())), 2)
+        self.assertTrue(fanart.art(client, self.rom(1)).startswith('https://romm'))   # plain meanwhile
+        self.assertIsNone(fanart.art(client, {'id': 3}))
+        self.assertEqual(fanart.work(xbmc.Monitor(), client), 2)
+        self.assertEqual(os.listdir(fanart.queue_dir()), [])
+        made = fanart.art(client, self.rom(1))
+        self.assertTrue(made.startswith(fanart.folder()) and os.path.exists(made))
+        self.assertFalse(os.path.exists(made + '.tmp'))
+        self.assertEqual(fanart.queue(roms), 0)                                   # nothing left to ask for
+        self.assertEqual(fanart.work(xbmc.Monitor(), client), 0)
+        self.assertEqual(len(client.fetched), 2)
 
-    def test_a_listing_makes_a_pageful_at_once(self):
+    def test_a_game_list_on_screen_is_refreshed(self):
         client = Shots()
-        roms = [self.rom(n) for n in range(5)]
-        with mock.patch.object(plugin, 'BACKDROPS', 3):
-            plugin.make_backdrops(client, roms)
-        made = [plugin.fanart(client, r) for r in roms]
-        self.assertEqual(sum(1 for p in made if p.startswith('https://romm')), 2)   # beyond the cap: plain for now
-        self.assertEqual(len(client.fetched), 3)
-        plugin.make_backdrops(client, roms)                                     # the next visit does the rest
-        self.assertEqual(len(client.fetched), 5)
-        self.assertTrue(all(plugin.fanart(client, r).endswith('.jpg') for r in roms))
+        fanart.queue([self.rom(1)])
+        xbmc.INFOLABELS['Container.FolderPath'] = 'plugin://plugin.program.romm/?action=roms&platform_id=8'
+        with mock.patch.object(fanart, 'RommClient', lambda timeout: client):
+            fanart.serve(type('Once', (), {'waits': iter([False, True]),
+                                            'waitForAbort': lambda s, t: next(s.waits), 'abortRequested': lambda s: False})())
+        self.assertEqual(xbmc.BUILTINS, ['Container.Refresh'])
+        xbmc.INFOLABELS['Container.FolderPath'] = 'plugin://plugin.video.other/'
+        fanart.refresh()
+        self.assertEqual(xbmc.BUILTINS, ['Container.Refresh'])                    # someone else's list: left alone
 
     def test_consoles_stretch_and_handhelds_keep_their_pixels(self):
         from PIL import Image
         client = Shots()
-        self.enterContext(mock.patch.object(plugin, 'look', lambda: 'plain'))
-        gb = dict(self.rom(2), platform_slug='gb')
-        plugin.make_backdrops(client, [self.rom(1), gb])
-        snes = Image.open(plugin.fanart(client, self.rom(1)))
+        with mock.patch.object(fanart, 'look', lambda: 'plain'):
+            gb = self.rom(2, 'gb')
+            fanart.queue([self.rom(1), gb])
+            fanart.work(xbmc.Monitor(), client)
+            snes = Image.open(fanart.art(client, self.rom(1)))
+            hand = Image.open(fanart.art(client, gb))
         self.assertTrue(close(snes.getpixel((362 + 12, 92 + 12)), (20, 220, 20)))      # 4:3: 1195 wide
         self.assertLess(max(snes.getpixel((362 - 12, 540))), 120)                       # the blurred copy beside it
-        hand = Image.open(plugin.fanart(client, gb))
         self.assertTrue(close(hand.getpixel((448 + 12, 92 + 12)), (20, 220, 20)))      # 4x: 1024 wide, as drawn
         self.assertLess(max(hand.getpixel((448 - 12, 540))), 120)
 
     def test_each_look_has_its_own_file(self):
         client = Shots()
-        with mock.patch.object(plugin, 'look', lambda: 'crt'):
-            plugin.make_backdrops(client, [self.rom(1)])
-            crt = plugin.fanart(client, self.rom(1))
-        with mock.patch.object(plugin, 'look', lambda: 'plain'):
-            self.assertTrue(plugin.fanart(client, self.rom(1)).startswith('https://romm'))   # not made for this look yet
-            plugin.make_backdrops(client, [self.rom(1)])
-            plain = plugin.fanart(client, self.rom(1))
+        with mock.patch.object(fanart, 'look', lambda: 'crt'):
+            fanart.queue([self.rom(1)])
+            fanart.work(xbmc.Monitor(), client)
+            crt = fanart.art(client, self.rom(1))
+        with mock.patch.object(fanart, 'look', lambda: 'plain'):
+            self.assertTrue(fanart.art(client, self.rom(1)).startswith('https://romm'))   # not made for this look yet
+            fanart.queue([self.rom(1)])
+            fanart.work(xbmc.Monitor(), client)
+            plain = fanart.art(client, self.rom(1))
         self.assertNotEqual(crt, plain)
         self.assertEqual(len(client.fetched), 2)
 
-    def test_server_down_shows_the_plain_screenshot(self):
+    def test_server_down_leaves_the_plain_screenshot(self):
         client = Shots(fail=True)
-        plugin.make_backdrops(client, [self.rom(1)])
-        self.assertTrue(plugin.fanart(client, self.rom(1)).startswith('https://romm'))
-        self.assertFalse(os.path.exists(kodi.profile_file('backdrops')))
+        fanart.queue([self.rom(1)])
+        self.assertEqual(fanart.work(xbmc.Monitor(), client), 0)
+        self.assertEqual(os.listdir(fanart.queue_dir()), [])                      # asked again by the next listing
+        self.assertTrue(fanart.art(client, self.rom(1)).startswith('https://romm'))
+        self.assertEqual(fanart.queue([self.rom(1)]), 1)
 
     def test_least_recently_listed_go_first(self):
         client = Shots()
-        with mock.patch.object(plugin, 'KEEP', 2):
-            plugin.make_backdrops(client, [self.rom(1)])
-            first = plugin.fanart(client, self.rom(1))
+        with mock.patch.object(fanart, 'KEEP', 2):
+            fanart.queue([self.rom(1)])
+            fanart.work(xbmc.Monitor(), client)
+            first = fanart.art(client, self.rom(1))
             os.utime(first, (1, 1))
-            plugin.make_backdrops(client, [self.rom(2), self.rom(3)])
+            fanart.queue([self.rom(2), self.rom(3)])
+            fanart.work(xbmc.Monitor(), client)
         self.assertFalse(os.path.exists(first))
-        self.assertEqual(len(os.listdir(kodi.profile_file('backdrops'))), 2)
+        self.assertEqual(len([n for n in os.listdir(fanart.folder()) if n.endswith('.jpg')]), 2)
 
 
 if __name__ == '__main__':

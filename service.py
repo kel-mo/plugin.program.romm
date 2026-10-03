@@ -7,7 +7,7 @@ from collections import deque
 
 import xbmc
 
-from resources.lib import auth, cache, device, kodi, tiles
+from resources.lib import auth, cache, device, fanart, kodi, tiles
 from resources.lib.api import ApiError, RommClient
 from resources.lib.sessions import SERVICE_TIMEOUT, PlayTracker
 
@@ -114,6 +114,8 @@ def run():
     tracker = PlayTracker()
     drawer = threading.Thread(target=draw_tiles, daemon=True)
     drawer.start()
+    maker = threading.Thread(target=fanart.serve, args=(monitor,), daemon=True)
+    maker.start()
     kodi.log('service started')
     while not monitor.waitForAbort(1):
         try:
@@ -127,6 +129,7 @@ def run():
     except Exception:
         kodi.log(traceback.format_exc(), xbmc.LOGERROR)
     drawer.join(SERVICE_TIMEOUT)
+    maker.join(SERVICE_TIMEOUT)
 
 
 if __name__ == '__main__':
