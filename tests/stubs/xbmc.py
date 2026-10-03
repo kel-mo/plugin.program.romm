@@ -3,6 +3,8 @@ LOGDEBUG, LOGINFO, LOGWARNING, LOGERROR = 0, 1, 2, 3
 BUILTINS = []
 def log(msg, level=0): print('LOG', level, msg)
 def executebuiltin(s, wait=False): BUILTINS.append(s); print('BUILTIN', s)
+INFOLABELS = {}
+def getInfoLabel(k): return INFOLABELS.get(k, '')
 def executeJSONRPC(s): return '{"result": {}}'
 def getCondVisibility(s): return False
 class Monitor:

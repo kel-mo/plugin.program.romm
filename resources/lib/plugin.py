@@ -1,28 +1,21 @@
 # -*- coding: utf-8 -*-
 """plugin:// router and directory listings."""
-import hashlib
 import json
 import os
 import traceback
-from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import parse_qsl, urlencode
 
 import xbmc
 import xbmcgui
 import xbmcplugin
 
-from . import auth, backdrop, cache, cores, device, icons, kodi, launch, props, tiles
+from . import auth, cache, cores, device, fanart, icons, kodi, launch, props, tiles
 from .api import ApiError, AuthError, RommClient
 
 BASE = 'plugin://{}/'.format(kodi.ADDON_ID)
 HANDLE = -1
 SORTS = [('name', 30305), ('first_release_date', 30306), ('average_rating', 30307),
          ('created_at', 30308), ('last_played', 30309)]
-BACKDROPS = 100                          # screenshots composed per listing at most; the rest show plain until a later visit
-WORKERS = 8                              # fetched and composed at once: the server round trips are the wait
-KEEP = 300                               # composed backdrops kept, about 150 MB; the least recently listed go
-HANDHELD = {'gb', 'gbc', 'gba', 'nds', 'nintendo-dsi', '3ds', 'psp', 'psvita', 'neo-geo-pocket', 'neo-geo-pocket-color',
-            'wonderswan', 'wonderswan-color', 'lynx', 'gamegear', 'virtualboy', 'pokemon-mini', 'n-gage'}   # square pixels
 RUN_ACTIONS = {'download', 'random', 'details', 'versions', 'sync_now', 'favourite', 'backlog', 'status', 'hide'}
 
 
@@ -138,70 +131,6 @@ def browse(client, kind=None):
     end()
 
 
-def screenshot(rom):
-    return next(iter(rom.get('merged_screenshots') or []), None)
-
-
-def look():
-    """The screenshot's look behind a list: plain, scanlines or crt."""
-    return kodi.setting('backdrop_look') or 'crt'
-
-
-def backdrop_path(shot):
-    name = hashlib.sha1('{}:{}'.format(look(), shot).encode()).hexdigest()[:20]   # another look: another file
-    return kodi.profile_file(os.path.join('backdrops', name + '.jpg'))
-
-
-def make_backdrops(client, roms):
-    """Compose the backdrops a listing lacks, several at a time: the first visit to a page waits a moment."""
-    todo = {screenshot(r): aspect(r) for r in roms if screenshot(r) and not os.path.exists(backdrop_path(screenshot(r)))}
-    if not todo:
-        return
-    with ThreadPoolExecutor(WORKERS) as pool:
-        list(pool.map(lambda shot: make_backdrop(client, shot, todo[shot]), sorted(todo)[:BACKDROPS]))
-    tidy_backdrops()
-
-
-def aspect(rom):
-    return None if rom.get('platform_slug') in HANDHELD else 4 / 3
-
-
-def make_backdrop(client, shot, aspect=None):
-    try:
-        data = client.asset(shot)
-        made = backdrop.compose(data, pixel=True, aspect=aspect, look=look())
-        if made is data:                                # no PIL: nothing to keep
-            return
-        path = backdrop_path(shot)
-        kodi.ensure_dir(os.path.dirname(path))
-        with open(path + '.tmp', 'wb') as f:
-            f.write(made)
-        os.replace(path + '.tmp', path)
-    except (ApiError, OSError, ValueError) as e:        # PIL raises OSError for unreadable pictures
-        kodi.debug('backdrop for {}: {}'.format(shot, e))
-
-
-def fanart(client, rom):
-    """The first screenshot composed to fit the screen, from the profile; the plain one until it has been made."""
-    shot = screenshot(rom)
-    if not shot:
-        return None
-    path = backdrop_path(shot)
-    if os.path.exists(path):
-        os.utime(path)                                  # listed again: kept longest
-        return path
-    return client.asset_url(shot)
-
-
-def tidy_backdrops():
-    folder = kodi.profile_file('backdrops')
-    if not os.path.isdir(folder):
-        return
-    files = sorted((os.path.join(folder, n) for n in os.listdir(folder) if n.endswith('.jpg')), key=os.path.getmtime)
-    for old in files[:-KEEP]:
-        os.remove(old)
-
-
 def rom_item(client, rom, installed, choices, cached_ids, favourite_ids=None, sortable=True, available=None):
     name = rom.get('name') or rom.get('fs_name_no_tags') or rom.get('fs_name')
     li = xbmcgui.ListItem(name, offscreen=True)
@@ -211,7 +140,7 @@ def rom_item(client, rom, installed, choices, cached_ids, favourite_ids=None, so
     if cover:
         art.update(thumb=cover, poster=cover, icon=cover)
     shots = rom.get('merged_screenshots') or []
-    back = fanart(client, rom)
+    back = fanart.art(client, rom)
     if back:
         art['fanart'] = back
     if art:
@@ -265,7 +194,7 @@ def roms(client, params):
     xbmcplugin.setContent(HANDLE, 'games')
     if params.get('name'):
         xbmcplugin.setPluginCategory(HANDLE, params['name'])
-    make_backdrops(client, items)
+    fanart.queue(items)
     for rom in items:
         rom_item(client, rom, installed, choices, cached_ids, favourite_ids, not params.get('order_by'), available)
     if offset + limit < (total or 0):
