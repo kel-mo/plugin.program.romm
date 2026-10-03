@@ -194,6 +194,13 @@ class RommClient:
         page = self.get('/api/roms', **params) or {}
         return page.get('items', []), page.get('total', 0)
 
+    def letters(self, **filters):
+        """Where each initial starts in a list sorted by name: {letter: offset}, and the total."""
+        params = dict(filters, offset=0, limit=1, with_char_index='true', with_filter_values='false',
+                      with_rom_id_index='false', order_by='name', order_dir='asc')
+        page = self.get('/api/roms', **params) or {}
+        return page.get('char_index') or {}, page.get('total', 0)
+
     def rom(self, rom_id):
         return self.get('/api/roms/{}'.format(int(rom_id)))
 

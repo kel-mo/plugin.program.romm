@@ -166,6 +166,10 @@ msgctxt "#30036"
 msgid "Install emulator"
 msgstr ""
 
+msgctxt "#30037"
+msgid "Jump to letter"
+msgstr ""
+
 # Settings: server 30100-30199
 
 msgctxt "#30100"
