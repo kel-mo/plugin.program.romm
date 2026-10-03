@@ -338,16 +338,6 @@ msgctxt "#30406"
 msgid "Delete all downloaded games"
 msgstr ""
 
-# Settings: advanced 30500-30599
-
-msgctxt "#30500"
-msgid "Advanced"
-msgstr ""
-
-msgctxt "#30501"
-msgid "Debug logging"
-msgstr ""
-
 # Dialogs and notifications 30600-30699
 
 msgctxt "#30600"

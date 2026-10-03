@@ -49,10 +49,7 @@ def log(msg, level=xbmc.LOGINFO):
 
 
 def debug(msg):
-    if setting_bool('debug'):
-        xbmc.log('[{}] {}'.format(ADDON_ID, msg), xbmc.LOGINFO)
-    else:
-        xbmc.log('[{}] {}'.format(ADDON_ID, msg), xbmc.LOGDEBUG)
+    xbmc.log('[{}] {}'.format(ADDON_ID, msg), xbmc.LOGDEBUG)
 
 
 def notify(message, heading=None, icon=None, time=4000):
