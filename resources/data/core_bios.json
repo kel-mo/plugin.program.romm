@@ -148,7 +148,17 @@
   "game.libretro.blastem": {
     "_source": "grout:blastem_libretro",
     "optional": [
-      "rom.db"
+      "rom.db",
+      "32X_M_BIOS.bin",
+      "32X_S_BIOS.bin",
+      "32X_G_BIOS.bin",
+      "bios_CD_U.bin",
+      "bios_CD_E.bin",
+      "bios_CD_J.bin",
+      "tmss.md",
+      "bios_MD.bin",
+      "colecovision.rom",
+      "laseractive_dyw_1322a.bin"
     ],
     "required": []
   },
