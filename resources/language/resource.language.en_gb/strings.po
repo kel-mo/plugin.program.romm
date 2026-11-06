@@ -484,6 +484,14 @@ msgctxt "#30637"
 msgid "Still disabled. If enabling failed, update or remove this emulator."
 msgstr ""
 
+msgctxt "#30638"
+msgid "Couldn't unpack {0}."
+msgstr ""
+
+msgctxt "#30639"
+msgid "Couldn't unpack {0}. A .7z file needs the vfs.libarchive add-on."
+msgstr ""
+
 # Settings: sync 30700-30799
 
 msgctxt "#30700"

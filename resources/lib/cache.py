@@ -5,15 +5,21 @@ import re
 import shutil
 import time
 import zipfile
+from urllib.parse import quote
 
 import xbmcvfs
 
 from . import kodi
+from .api import ApiError
 from .cores import LAUNCH_PRIORITY
 
 MARKER = '.romm.json'
 EXTRACTED = '.romm-extracted'
-ARCHIVE_EXTS = {'zip'}
+ARCHIVE_EXTS = {'zip', '7z'}
+# disc images, which a core that reads zips (Saturn's, for ST-V sets) can't read from one
+DISC_EXTS = {'cue', 'chd', 'iso', 'gdi', 'ccd', 'toc', 'mds', 'cdi', 'pbp', 'm3u', 'cso', 'ciso', 'zso',
+             'rvz', 'wbfs', 'gcz'}
+CHUNK = 4 << 20
 SKIP_CATEGORIES = {'manual', 'walkthrough', 'patch', 'cheat', 'soundtrack', 'screenshot'}
 
 
@@ -120,25 +126,32 @@ def ensure_rom(rom, client, progress=None):
     return directory, local
 
 
-def extract_if_needed(local_files, supported_exts, progress=None):
-    """Unpack a single zip when no candidate core reads archives directly."""
+def extract_if_needed(local_files, supported_exts, progress=None, keep_archives=False):
+    """Unpack a single archive unless the platform's cores read it as it is."""
     if len(local_files) != 1 or _ext(local_files[0]) not in ARCHIVE_EXTS:
-        return local_files
-    if supported_exts and 'zip' in supported_exts:
         return local_files
     archive = local_files[0]
     target = os.path.splitext(archive)[0]
     if os.path.exists(os.path.join(target, EXTRACTED)):
         return _walk(target)
-    if progress:
-        progress(0, 1, 1, 1, os.path.basename(archive))
-    with zipfile.ZipFile(archive) as z:
-        for member in z.infolist():
-            # guard against path traversal
-            dest = os.path.normpath(os.path.join(target, member.filename))
-            if not dest.startswith(os.path.normpath(target) + os.sep) and dest != os.path.normpath(target):
-                continue
-            z.extract(member, target)
+    native = bool(supported_exts) and _ext(archive) in supported_exts
+    if native and keep_archives:
+        return local_files
+    zipped = _ext(archive) == 'zip'
+    names = _zip_names(archive) if zipped else _vfs_names(archive)
+    if native and not DISC_EXTS & set(map(_ext, names)):
+        return local_files
+    if not names:
+        raise ApiError(kodi.L(30638 if zipped else 30639, os.path.basename(archive)))
+    if zipped:
+        if progress:
+            progress(0, 1, 1, 1, os.path.basename(archive))
+        with zipfile.ZipFile(archive) as z:
+            for member in z.infolist():
+                if _inside(target, member.filename):
+                    z.extract(member, target)
+    else:
+        _vfs_extract(archive, names, target, progress)
     extracted = _walk(target)
     if extracted:
         with open(os.path.join(target, EXTRACTED), 'w'):
@@ -149,6 +162,59 @@ def extract_if_needed(local_files, supported_exts, progress=None):
             marker['files'] = extracted
             kodi.write_json(os.path.join(os.path.dirname(archive), MARKER), marker)
     return extracted or local_files
+
+
+def _inside(target, name):
+    """False for a member that would land outside target (path traversal)."""
+    dest = os.path.normpath(os.path.join(target, name))
+    return dest.startswith(os.path.normpath(target) + os.sep)
+
+
+def _zip_names(archive):
+    with zipfile.ZipFile(archive) as z:
+        return [m.filename for m in z.infolist() if not m.is_dir()]
+
+
+def _vfs_url(archive, name=''):
+    return 'archive://' + quote(archive, safe='') + '/' + name
+
+
+def _vfs_names(archive, rel=''):
+    """Files in an archive that Kodi reads through vfs.libarchive, as relative paths."""
+    try:
+        dirs, files = xbmcvfs.listdir(_vfs_url(archive, rel))
+    except (OSError, RuntimeError):
+        return []
+    names = [rel + f for f in files]
+    for d in dirs:
+        names += _vfs_names(archive, rel + d + '/')
+    return names
+
+
+def _vfs_extract(archive, names, target, progress):
+    for index, name in enumerate(names, 1):
+        if not _inside(target, name):
+            continue
+        dest = os.path.join(target, *name.split('/'))
+        kodi.ensure_dir(os.path.dirname(dest))
+        src = xbmcvfs.File(_vfs_url(archive, name))
+        try:
+            total, done = src.size(), 0
+            with open(dest + '.part', 'wb') as out:
+                while True:
+                    data = src.readBytes(CHUNK)
+                    if not data:
+                        break
+                    out.write(data)
+                    done += len(data)
+                    if progress and progress(done, total, index, len(names), os.path.basename(name)) is False:
+                        raise ApiError('cancelled')
+        finally:
+            src.close()
+        # nothing at all also means Kodi couldn't open the member
+        if done != total or not done:
+            raise ApiError(kodi.L(30638, os.path.basename(archive)))
+        os.replace(dest + '.part', dest)
 
 
 def _walk(directory):

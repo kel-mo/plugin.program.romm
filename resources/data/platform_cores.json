@@ -500,7 +500,8 @@
         "m3u8",
         "vhd",
         "zip"
-      ]
+      ],
+      "keep_archives": true
     },
     "famicom": {
       "name": "Famicom",

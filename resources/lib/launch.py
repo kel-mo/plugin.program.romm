@@ -86,7 +86,7 @@ def prepare(rom, client, progress, want_play=True):
 
     _dir, files = cache.ensure_rom(rom, client, progress.files)
     exts = cores.extensions(slug)
-    files = cache.extract_if_needed(files, exts, progress.files)
+    files = cache.extract_if_needed(files, exts, progress.files, cores.keeps_archives(slug))
     launch_path = cache.pick_launch_file(files, exts)
     if not launch_path:
         raise ApiError(kodi.L(30623))

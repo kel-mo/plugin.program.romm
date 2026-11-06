@@ -49,6 +49,12 @@ def extensions(slug):
     return set(e.lower().lstrip('.') for e in exts) if exts else None
 
 
+def keeps_archives(slug):
+    """True when the platform's cores mount disc images from inside their archives (DOSBox Pure)."""
+    entry = platform_entry(slug)
+    return bool(entry and entry.get('keep_archives'))
+
+
 def installed_clients():
     result = kodi.jsonrpc('Addons.GetAddons', type='kodi.gameclient', enabled=True) or {}
     return set(a['addonid'] for a in result.get('addons', []) or [])
