@@ -200,6 +200,10 @@
     "ext": "srm",
     "mode": "kodi"
   },
+  "game.libretro.rpcs3": {
+    "mode": "core",
+    "multi": true
+  },
   "game.libretro.sameboy": {
     "ext": "srm",
     "mode": "kodi"

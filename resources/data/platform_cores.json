@@ -968,6 +968,21 @@
         "zso"
       ]
     },
+    "ps3": {
+      "name": "Sony PlayStation 3",
+      "cores": [
+        "game.libretro.rpcs3"
+      ],
+      "extensions": [
+        "bin",
+        "elf",
+        "iso",
+        "pkg",
+        "self",
+        "sfb",
+        "sfo"
+      ]
+    },
     "psx": {
       "name": "Sony PlayStation",
       "cores": [
@@ -1496,6 +1511,7 @@
     "prboom": "doom",
     "ps": "psx",
     "ps1": "psx",
+    "ps3-psn": "ps3",
     "psone": "psx",
     "sega-32x": "sega32",
     "sega-cd": "segacd",
